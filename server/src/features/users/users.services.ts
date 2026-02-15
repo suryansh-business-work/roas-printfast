@@ -1,0 +1,182 @@
+import bcrypt from 'bcrypt';
+import { UserModel, IUser } from './users.models';
+import { UserRole } from '../../types/enums';
+import { IPaginatedResult } from '../../types/common';
+import { ConflictError, NotFoundError, ForbiddenError } from '../../utils/errors';
+import logger from '../../utils/logger';
+
+const BCRYPT_ROUNDS = 12;
+
+interface CreateUserData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  role: UserRole;
+  createdBy: string;
+}
+
+interface ListUsersParams {
+  page: number;
+  limit: number;
+  sort: string;
+  order: 'asc' | 'desc';
+  search?: string;
+  role?: UserRole;
+  isActive?: boolean;
+}
+
+interface UserResponse {
+  userId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: UserRole;
+  isActive: boolean;
+  createdBy: string | null;
+  lastLoginAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const toUserResponse = (user: IUser): UserResponse => ({
+  userId: user._id.toString(),
+  email: user.email,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  role: user.role,
+  isActive: user.isActive,
+  createdBy: user.createdBy?.toString() ?? null,
+  lastLoginAt: user.lastLoginAt,
+  createdAt: user.createdAt,
+  updatedAt: user.updatedAt,
+});
+
+export const createUser = async (
+  data: CreateUserData,
+  creatorRole: UserRole,
+): Promise<UserResponse> => {
+  if (data.role === UserRole.GOD_USER) {
+    throw new ForbiddenError('God User accounts cannot be created');
+  }
+
+  if (data.role === UserRole.ADMIN_USER && creatorRole !== UserRole.GOD_USER) {
+    throw new ForbiddenError('Only God Users can create Admin users');
+  }
+
+  const existingUser = await UserModel.findOne({ email: data.email });
+  if (existingUser) {
+    throw new ConflictError('Email already exists');
+  }
+
+  const hashedPassword = await bcrypt.hash(data.password, BCRYPT_ROUNDS);
+
+  const user = await UserModel.create({
+    email: data.email,
+    password: hashedPassword,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    role: data.role,
+    createdBy: data.createdBy,
+  });
+
+  logger.info(`User created: ${user.email} (${user.role}) by ${data.createdBy}`);
+
+  return toUserResponse(user);
+};
+
+export const listUsers = async (
+  params: ListUsersParams,
+): Promise<IPaginatedResult<UserResponse>> => {
+  const { page, limit, sort, order, search, role, isActive } = params;
+
+  const filter: Record<string, unknown> = {};
+
+  if (role) {
+    filter.role = role;
+  }
+
+  if (isActive !== undefined) {
+    filter.isActive = isActive;
+  }
+
+  if (search) {
+    const searchRegex = new RegExp(search, 'i');
+    filter.$or = [{ firstName: searchRegex }, { lastName: searchRegex }, { email: searchRegex }];
+  }
+
+  const skip = (page - 1) * limit;
+  const sortOption: Record<string, 1 | -1> = { [sort]: order === 'asc' ? 1 : -1 };
+
+  const [items, totalItems] = await Promise.all([
+    UserModel.find(filter).sort(sortOption).skip(skip).limit(limit),
+    UserModel.countDocuments(filter),
+  ]);
+
+  return {
+    items: items.map(toUserResponse),
+    totalItems,
+    totalPages: Math.ceil(totalItems / limit),
+    currentPage: page,
+    limit,
+  };
+};
+
+export const getUserById = async (userId: string): Promise<UserResponse> => {
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+  return toUserResponse(user);
+};
+
+export const updateUser = async (
+  userId: string,
+  data: Partial<{ firstName: string; lastName: string; email: string }>,
+): Promise<UserResponse> => {
+  if (data.email) {
+    const existingUser = await UserModel.findOne({ email: data.email, _id: { $ne: userId } });
+    if (existingUser) {
+      throw new ConflictError('Email already exists');
+    }
+  }
+
+  const user = await UserModel.findByIdAndUpdate(userId, { $set: data }, { new: true });
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+
+  logger.info(`User updated: ${user.email}`);
+
+  return toUserResponse(user);
+};
+
+export const deactivateUser = async (userId: string): Promise<UserResponse> => {
+  const user = await UserModel.findByIdAndUpdate(
+    userId,
+    { $set: { isActive: false } },
+    { new: true },
+  );
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+
+  logger.info(`User deactivated: ${user.email}`);
+
+  return toUserResponse(user);
+};
+
+export const activateUser = async (userId: string): Promise<UserResponse> => {
+  const user = await UserModel.findByIdAndUpdate(
+    userId,
+    { $set: { isActive: true } },
+    { new: true },
+  );
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+
+  logger.info(`User activated: ${user.email}`);
+
+  return toUserResponse(user);
+};
