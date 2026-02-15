@@ -40,6 +40,17 @@ export interface IChangePasswordPayload {
   confirmNewPassword: string;
 }
 
+export interface ICreateUserPayload {
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: UserRole.ADMIN_USER | UserRole.VENDOR_USER;
+}
+
+export interface ICreateUserResponse extends IUserDetail {
+  generatedPassword?: string;
+}
+
 export interface IApiResponse<T = undefined> {
   success: boolean;
   data?: T;

@@ -1,5 +1,11 @@
 import api from './api';
-import { IApiResponse, IUserDetail, IPaginatedResult } from '../types/user.types';
+import {
+  IApiResponse,
+  IUserDetail,
+  IPaginatedResult,
+  ICreateUserPayload,
+  ICreateUserResponse,
+} from '../types/user.types';
 
 interface ListUsersParams {
   page?: number;
@@ -25,18 +31,10 @@ export const getUserById = async (id: string): Promise<IApiResponse<IUserDetail>
   return response.data;
 };
 
-interface CreateUserPayload {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-}
-
 export const createUser = async (
-  payload: CreateUserPayload,
-): Promise<IApiResponse<IUserDetail>> => {
-  const response = await api.post<IApiResponse<IUserDetail>>('/users', payload);
+  payload: ICreateUserPayload,
+): Promise<IApiResponse<ICreateUserResponse>> => {
+  const response = await api.post<IApiResponse<ICreateUserResponse>>('/users', payload);
   return response.data;
 };
 
