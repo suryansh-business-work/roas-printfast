@@ -3,15 +3,17 @@ import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import Link from '@mui/material/Link';
 import CircularProgress from '@mui/material/CircularProgress';
+import InputAdornment from '@mui/material/InputAdornment';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useAuth } from '../../hooks/useAuth';
+import { AuthLayout } from '../../components/AuthLayout';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -41,80 +43,117 @@ const Login = () => {
   });
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'background.default',
-        p: 2,
-      }}
-    >
-      <Card sx={{ maxWidth: 440, width: '100%' }}>
-        <CardContent sx={{ p: 4 }}>
-          <Typography variant="h4" align="center" gutterBottom>
-            ROAS PrintFast
-          </Typography>
-          <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: 3 }}>
-            Sign in to your account
-          </Typography>
+    <AuthLayout subtitle="Log in to access your dashboard.">
+      <Typography variant="h4" sx={{ fontWeight: 700, mb: 3 }}>
+        Welcome Back
+      </Typography>
 
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
 
-          <form onSubmit={formik.handleSubmit}>
-            <TextField
-              fullWidth
-              id="email"
-              name="email"
-              label="Email"
-              margin="normal"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
-              autoComplete="email"
-            />
-            <TextField
-              fullWidth
-              id="password"
-              name="password"
-              label="Password"
-              type="password"
-              margin="normal"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
-              autoComplete="current-password"
-            />
-            <Button
-              fullWidth
-              type="submit"
-              variant="contained"
-              size="large"
-              disabled={formik.isSubmitting}
-              sx={{ mt: 3, mb: 2 }}
-            >
-              {formik.isSubmitting ? <CircularProgress size={24} /> : 'Sign In'}
-            </Button>
-          </form>
+      <form onSubmit={formik.handleSubmit}>
+        <TextField
+          fullWidth
+          id="email"
+          name="email"
+          placeholder="Email Address"
+          margin="normal"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
+          autoComplete="email"
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailOutlinedIcon color="action" />
+                </InputAdornment>
+              ),
+            },
+          }}
+          sx={{ '& .MuiOutlinedInput-root': { borderRadius: '28px' } }}
+        />
+        <TextField
+          fullWidth
+          id="password"
+          name="password"
+          placeholder="Password"
+          type="password"
+          margin="normal"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.password && Boolean(formik.errors.password)}
+          helperText={formik.touched.password && formik.errors.password}
+          autoComplete="current-password"
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlinedIcon color="action" />
+                </InputAdornment>
+              ),
+            },
+          }}
+          sx={{ '& .MuiOutlinedInput-root': { borderRadius: '28px' } }}
+        />
 
-          <Typography variant="body2" align="center">
-            Don&apos;t have an account?{' '}
-            <Link component={RouterLink} to="/signup">
-              Sign Up
-            </Link>
-          </Typography>
-        </CardContent>
-      </Card>
-    </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 0.5, mb: 1 }}>
+          <Link component={RouterLink} to="/forgot-password" variant="body2" underline="hover">
+            Forgot password?
+          </Link>
+        </Box>
+
+        <Button
+          fullWidth
+          type="submit"
+          variant="contained"
+          size="large"
+          disabled={formik.isSubmitting}
+          sx={{
+            mt: 1,
+            mb: 2,
+            py: 1.5,
+            borderRadius: '28px',
+            fontSize: '1rem',
+            fontWeight: 600,
+          }}
+        >
+          {formik.isSubmitting ? <CircularProgress size={24} /> : 'Log In'}
+        </Button>
+
+        <Button
+          fullWidth
+          variant="outlined"
+          size="large"
+          component={RouterLink}
+          to="/signup"
+          sx={{
+            mb: 3,
+            py: 1.5,
+            borderRadius: '28px',
+            fontSize: '1rem',
+            fontWeight: 600,
+          }}
+        >
+          Request Demo or Sign Up
+        </Button>
+      </form>
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 1 }}>
+        <Link variant="caption" color="text.secondary" underline="hover" href="#">
+          Privacy Policy
+        </Link>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <LockOutlinedIcon sx={{ fontSize: 14 }} /> Secured by SSL
+        </Typography>
+      </Box>
+    </AuthLayout>
   );
 };
 

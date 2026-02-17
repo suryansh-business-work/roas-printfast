@@ -3,18 +3,16 @@ import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import Link from '@mui/material/Link';
-import MenuItem from '@mui/material/MenuItem';
 import CircularProgress from '@mui/material/CircularProgress';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useAuth } from '../../hooks/useAuth';
 import { UserRole } from '../../types/user.types';
 import { getPublicConfig } from '../../services/config.service';
+import { AuthLayout } from '../../components/AuthLayout';
+import SignupForm from './SignupForm';
 
 const validationSchema = Yup.object({
   firstName: Yup.string().max(50, 'Max 50 characters').required('First name is required'),
@@ -98,136 +96,35 @@ const Signup = () => {
   }
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'background.default',
-        p: 2,
-      }}
-    >
-      <Card sx={{ maxWidth: 480, width: '100%' }}>
-        <CardContent sx={{ p: 4 }}>
-          <Typography variant="h4" align="center" gutterBottom>
-            Create Account
-          </Typography>
-          <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: 3 }}>
-            Sign up for ROAS PrintFast
-          </Typography>
+    <AuthLayout subtitle="Create an account to get started.">
+      <Typography variant="h4" sx={{ fontWeight: 700, mb: 3 }}>
+        Create Account
+      </Typography>
 
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
 
-          <form onSubmit={formik.handleSubmit}>
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <TextField
-                fullWidth
-                id="firstName"
-                name="firstName"
-                label="First Name"
-                margin="normal"
-                value={formik.values.firstName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                helperText={formik.touched.firstName && formik.errors.firstName}
-              />
-              <TextField
-                fullWidth
-                id="lastName"
-                name="lastName"
-                label="Last Name"
-                margin="normal"
-                value={formik.values.lastName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-                helperText={formik.touched.lastName && formik.errors.lastName}
-              />
-            </Box>
-            <TextField
-              fullWidth
-              id="email"
-              name="email"
-              label="Email"
-              margin="normal"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
-              autoComplete="email"
-            />
-            <TextField
-              fullWidth
-              id="password"
-              name="password"
-              label="Password"
-              type="password"
-              margin="normal"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
-              autoComplete="new-password"
-            />
-            <TextField
-              fullWidth
-              id="confirmPassword"
-              name="confirmPassword"
-              label="Confirm Password"
-              type="password"
-              margin="normal"
-              value={formik.values.confirmPassword}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
-              helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
-              autoComplete="new-password"
-            />
-            <TextField
-              fullWidth
-              select
-              id="role"
-              name="role"
-              label="Account Type"
-              margin="normal"
-              value={formik.values.role}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.role && Boolean(formik.errors.role)}
-              helperText={formik.touched.role && formik.errors.role}
-            >
-              <MenuItem value={UserRole.VENDOR_USER}>Vendor</MenuItem>
-              {allowAdminSignup && <MenuItem value={UserRole.ADMIN_USER}>Admin</MenuItem>}
-            </TextField>
-            <Button
-              fullWidth
-              type="submit"
-              variant="contained"
-              size="large"
-              disabled={formik.isSubmitting}
-              sx={{ mt: 3, mb: 2 }}
-            >
-              {formik.isSubmitting ? <CircularProgress size={24} /> : 'Create Account'}
-            </Button>
-          </form>
+      <SignupForm formik={formik} allowAdminSignup={allowAdminSignup} />
 
-          <Typography variant="body2" align="center">
-            Already have an account?{' '}
-            <Link component={RouterLink} to="/login">
-              Sign In
-            </Link>
-          </Typography>
-        </CardContent>
-      </Card>
-    </Box>
+      <Typography variant="body2" align="center">
+        Already have an account?{' '}
+        <Link component={RouterLink} to="/login">
+          Sign In
+        </Link>
+      </Typography>
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+        <Link variant="caption" color="text.secondary" underline="hover" href="#">
+          Privacy Policy
+        </Link>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <LockOutlinedIcon sx={{ fontSize: 14 }} /> Secured by SSL
+        </Typography>
+      </Box>
+    </AuthLayout>
   );
 };
 
