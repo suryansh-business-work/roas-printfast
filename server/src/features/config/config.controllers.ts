@@ -6,6 +6,7 @@ export const getPublicConfig = (_req: Request, res: Response, next: NextFunction
   try {
     sendSuccess(res, {
       allowAdminSignup: config.allowAdminSignup,
+      allowSendGodCredentials: config.allowSendGodCredentials,
     });
   } catch (error) {
     next(error);

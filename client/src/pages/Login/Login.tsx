@@ -14,6 +14,7 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useAuth } from '../../hooks/useAuth';
 import { AuthLayout } from '../../components/AuthLayout';
+import SendGodCredentialsLink from './SendGodCredentialsLink';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -144,6 +145,8 @@ const Login = () => {
           Request Demo or Sign Up
         </Button>
       </form>
+
+      <SendGodCredentialsLink />
 
       <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 1 }}>
         <Link variant="caption" color="text.secondary" underline="hover" href="#">

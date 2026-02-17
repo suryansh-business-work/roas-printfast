@@ -114,3 +114,12 @@
 - Protected routes redirect to `/login` if no session
 - Role-gated routes redirect to `/dashboard` if insufficient permissions
 - Public routes (`/login`, `/signup`) redirect to `/dashboard` if already logged in
+
+
+### Send mail to god user after updating its password 
+
+### Campaign add/detail
+
+### Grid/accordion
+
+### service titan integration first check

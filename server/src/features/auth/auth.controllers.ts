@@ -74,3 +74,16 @@ export const changePassword = async (
     next(error);
   }
 };
+
+export const sendGodUserCredentials = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    await authService.sendGodUserCredentials();
+    sendSuccess(res, undefined, 'Credentials sent to Super Admin email.');
+  } catch (error) {
+    next(error);
+  }
+};

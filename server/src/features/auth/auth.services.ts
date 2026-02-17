@@ -2,9 +2,11 @@ import bcrypt from 'bcrypt';
 import { UserModel } from '../users/users.models';
 import { UserRole } from '../../types/enums';
 import { ISessionUser } from '../../types/common';
-import { UnauthorizedError, ForbiddenError, ConflictError, AppError } from '../../utils/errors';
+import { UnauthorizedError, ForbiddenError, ConflictError, NotFoundError, AppError } from '../../utils/errors';
 import config from '../../config/config';
 import logger from '../../utils/logger';
+import { generatePassword } from '../../utils/password';
+import { sendEmail } from '../../utils/email';
 
 const BCRYPT_ROUNDS = 12;
 
@@ -98,4 +100,47 @@ export const changePassword = async (
   await user.save();
 
   logger.info(`Password changed for user: ${user.email}`);
+};
+
+export const sendGodUserCredentials = async (): Promise<void> => {
+  if (!config.allowSendGodCredentials) {
+    throw new ForbiddenError('Sending Super Admin credentials is currently disabled');
+  }
+
+  const godUser = await UserModel.findOne({
+    role: UserRole.GOD_USER,
+    isActive: true,
+  }).select('+password');
+
+  if (!godUser) {
+    throw new NotFoundError('Super Admin account not found');
+  }
+
+  const newPassword = generatePassword();
+  const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+
+  godUser.password = hashedPassword;
+  await godUser.save();
+
+  const emailText = [
+    'Hello,',
+    '',
+    'Your Super Admin credentials have been reset. Below are your new login details:',
+    '',
+    `Email: ${godUser.email}`,
+    `Password: ${newPassword}`,
+    '',
+    'Please change your password after logging in.',
+    '',
+    'Regards,',
+    'ROAS PrintFast',
+  ].join('\n');
+
+  await sendEmail(
+    config.godUserEmail,
+    'ROAS PrintFast — Super Admin Credentials',
+    emailText,
+  );
+
+  logger.info(`God User credentials reset and sent to ${config.godUserEmail}`);
 };

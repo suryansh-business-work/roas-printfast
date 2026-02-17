@@ -71,4 +71,5 @@ export interface IPaginatedResult<T> {
 
 export interface IPublicConfig {
   allowAdminSignup: boolean;
+  allowSendGodCredentials: boolean;
 }

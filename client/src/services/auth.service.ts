@@ -31,3 +31,8 @@ export const changePassword = async (payload: IChangePasswordPayload): Promise<I
   const response = await api.post<IApiResponse>('/auth/change-password', payload);
   return response.data;
 };
+
+export const sendSuperAdminCredentials = async (): Promise<IApiResponse> => {
+  const response = await api.post<IApiResponse>('/auth/send-god-user-credentials');
+  return response.data;
+};
