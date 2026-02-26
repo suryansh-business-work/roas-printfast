@@ -12,6 +12,8 @@ import Vendors from './pages/Vendors/Vendors';
 import Reports from './pages/Reports/Reports';
 import Profile from './pages/Profile/Profile';
 import Settings from './pages/Settings/Settings';
+import Campaigns from './pages/Campaigns/Campaigns';
+import CampaignDetail from './pages/Campaigns/CampaignDetail';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -113,6 +115,8 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="/campaigns" element={<Campaigns />} />
+          <Route path="/campaigns/:id" element={<CampaignDetail />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/profile" element={<Profile />} />
           <Route

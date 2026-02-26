@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
 
 import config from './config/config';
 import connectDatabase from './config/database';
@@ -13,6 +14,8 @@ import logger from './utils/logger';
 import authRoutes from './features/auth/auth.routes';
 import usersRoutes from './features/users/users.routes';
 import configRoutes from './features/config/config.routes';
+import vendorsRoutes from './features/vendors/vendors.routes';
+import campaignsRoutes from './features/campaigns/campaigns.routes';
 
 const app = express();
 
@@ -45,6 +48,11 @@ const authLimiter = rateLimit({
 app.use('/api/v1/auth', authLimiter, authRoutes);
 app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/config', configRoutes);
+app.use('/api/v1/vendors', vendorsRoutes);
+app.use('/api/v1/campaigns', campaignsRoutes);
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.resolve(__dirname, '../../uploads')));
 
 // Health check
 app.get('/api/v1/health', (_req, res) => {

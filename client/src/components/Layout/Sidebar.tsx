@@ -13,6 +13,7 @@ import StoreIcon from '@mui/icons-material/Store';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
+import CampaignIcon from '@mui/icons-material/Campaign';
 import { useAuth } from '../../hooks/useAuth';
 import { UserRole } from '../../types/user.types';
 
@@ -41,6 +42,12 @@ const menuItems: MenuItem[] = [
     icon: <StoreIcon />,
     path: '/vendors',
     roles: [UserRole.GOD_USER, UserRole.ADMIN_USER],
+  },
+  {
+    label: 'Campaigns',
+    icon: <CampaignIcon />,
+    path: '/campaigns',
+    roles: [UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER],
   },
   {
     label: 'Reports',
@@ -106,7 +113,9 @@ const Sidebar = ({
           {filteredItems.map((item) => (
             <ListItemButton
               key={item.path}
-              selected={location.pathname === item.path}
+              selected={
+                location.pathname === item.path || location.pathname.startsWith(item.path + '/')
+              }
               onClick={() => handleNavigation(item.path)}
               sx={{
                 minHeight: 48,
