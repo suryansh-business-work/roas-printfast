@@ -43,12 +43,6 @@ const Layout = () => {
           flexGrow: 1,
           p: 3,
           mt: 8,
-          ml: isMobile ? 0 : `${currentDrawerWidth}px`,
-          transition: theme.transitions.create('margin', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-          }),
-          width: isMobile ? '100%' : `calc(100% - ${currentDrawerWidth}px)`,
         }}
       >
         <Outlet />
