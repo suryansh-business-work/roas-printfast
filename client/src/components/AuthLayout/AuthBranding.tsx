@@ -100,10 +100,7 @@ const AuthBranding = ({ subtitle }: AuthBrandingProps) => {
       <Box sx={{ position: 'relative', zIndex: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
           <TrendingUpIcon sx={{ fontSize: 40, color: '#4fc3f7' }} />
-          <Typography
-            variant="h4"
-            sx={{ color: '#fff', fontWeight: 700, letterSpacing: 1 }}
-          >
+          <Typography variant="h4" sx={{ color: '#fff', fontWeight: 700, letterSpacing: 1 }}>
             ROAS PRO
           </Typography>
         </Box>
@@ -125,10 +122,7 @@ const AuthBranding = ({ subtitle }: AuthBrandingProps) => {
           Tracking.
         </Typography>
 
-        <Typography
-          variant="body1"
-          sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.05rem' }}
-        >
+        <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.05rem' }}>
           {subtitle || 'Log in to access your dashboard.'}
         </Typography>
       </Box>

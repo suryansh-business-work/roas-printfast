@@ -14,6 +14,7 @@ import Profile from './pages/Profile/Profile';
 import Settings from './pages/Settings/Settings';
 import Campaigns from './pages/Campaigns/Campaigns';
 import CampaignDetail from './pages/Campaigns/CampaignDetail';
+import Integrations from './pages/Integrations/Integrations';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -117,6 +118,14 @@ const App = () => {
           />
           <Route path="/campaigns" element={<Campaigns />} />
           <Route path="/campaigns/:id" element={<CampaignDetail />} />
+          <Route
+            path="/integrations"
+            element={
+              <ProtectedRoute roles={[UserRole.GOD_USER, UserRole.ADMIN_USER]}>
+                <Integrations />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/reports" element={<Reports />} />
           <Route path="/profile" element={<Profile />} />
           <Route

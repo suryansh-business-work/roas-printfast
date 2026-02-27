@@ -6,7 +6,7 @@ const Settings = () => {
   return (
     <Box>
       <Breadcrumb />
-      <Typography variant="h4" sx={{ mb: 3 }}>
+      <Typography variant="h5" sx={{ mb: 2 }}>
         Settings
       </Typography>
       <Typography variant="body1" color="text.secondary">

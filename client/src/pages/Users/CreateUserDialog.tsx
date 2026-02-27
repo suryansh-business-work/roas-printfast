@@ -25,12 +25,8 @@ const validationSchema = Yup.object({
   firstName: Yup.string()
     .required('First name is required')
     .max(50, 'First name max 50 characters'),
-  lastName: Yup.string()
-    .required('Last name is required')
-    .max(50, 'Last name max 50 characters'),
-  email: Yup.string()
-    .email('Invalid email address')
-    .required('Email is required'),
+  lastName: Yup.string().required('Last name is required').max(50, 'Last name max 50 characters'),
+  email: Yup.string().email('Invalid email address').required('Email is required'),
   role: Yup.string()
     .oneOf([UserRole.ADMIN_USER, UserRole.VENDOR_USER], 'Invalid role')
     .required('Role is required'),

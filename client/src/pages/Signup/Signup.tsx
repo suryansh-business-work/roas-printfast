@@ -120,7 +120,11 @@ const Signup = () => {
         <Link variant="caption" color="text.secondary" underline="hover" href="#">
           Privacy Policy
         </Link>
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+        >
           <LockOutlinedIcon sx={{ fontSize: 14 }} /> Secured by SSL
         </Typography>
       </Box>

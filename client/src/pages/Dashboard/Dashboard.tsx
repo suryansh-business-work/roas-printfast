@@ -19,7 +19,7 @@ interface StatCardProps {
 
 const StatCard = ({ title, value, icon, color }: StatCardProps) => (
   <Card>
-    <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 3 }}>
+    <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2 }}>
       <Box
         sx={{
           backgroundColor: color,
@@ -50,14 +50,14 @@ const Dashboard = () => {
   return (
     <Box>
       <Breadcrumb />
-      <Typography variant="h4" sx={{ mb: 1 }}>
+      <Typography variant="h5" sx={{ mb: 0.5 }}>
         Dashboard
       </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         Welcome back, {user?.firstName}!
       </Typography>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         {isAdminOrGod && (
           <>
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>

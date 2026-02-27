@@ -64,16 +64,16 @@ const CampaignDetail = () => {
     setSelectedWeek(week);
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0] || !id) return;
     try {
-      const response = await campaignService.uploadPostcardImage(id, e.target.files[0]);
+      const response = await campaignService.uploadPostcardPdf(id, e.target.files[0]);
       if (response.success && response.data) {
         setCampaign(response.data);
-        setSnackbar({ open: true, message: 'Image uploaded successfully', severity: 'success' });
+        setSnackbar({ open: true, message: 'PDF uploaded successfully', severity: 'success' });
       }
     } catch {
-      setSnackbar({ open: true, message: 'Failed to upload image', severity: 'error' });
+      setSnackbar({ open: true, message: 'Failed to upload PDF', severity: 'error' });
     }
   };
 
@@ -97,8 +97,8 @@ const CampaignDetail = () => {
   return (
     <Box>
       <Breadcrumb />
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">{campaign.name}</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h5">{campaign.name}</Typography>
         <Typography variant="subtitle1" color="text.secondary">
           {campaign.vendor.name}
         </Typography>
@@ -118,8 +118,8 @@ const CampaignDetail = () => {
                   size="small"
                   startIcon={<UploadIcon />}
                 >
-                  Upload Postcard
-                  <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
+                  Upload Postcard PDF
+                  <input type="file" hidden accept="application/pdf" onChange={handlePdfUpload} />
                 </Button>
               </Box>
             )}

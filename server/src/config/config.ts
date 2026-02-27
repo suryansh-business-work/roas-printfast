@@ -20,6 +20,9 @@ interface IConfig {
   smtpPort: number;
   smtpUser: string;
   smtpPass: string;
+  imagekitPublicKey: string;
+  imagekitPrivateKey: string;
+  imagekitUrlEndpoint: string;
 }
 
 const config: IConfig = {
@@ -39,6 +42,9 @@ const config: IConfig = {
   smtpPort: parseInt(process.env.SMTP_PORT || '587', 10),
   smtpUser: process.env.SMTP_USER || '',
   smtpPass: process.env.SMTP_PASS || '',
+  imagekitPublicKey: process.env.IMAGEKIT_PUBLIC_KEY || '',
+  imagekitPrivateKey: process.env.IMAGEKIT_PRIVATE_KEY || '',
+  imagekitUrlEndpoint: process.env.IMAGEKIT_URL_ENDPOINTS || '',
 };
 
 export default config;

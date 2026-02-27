@@ -2,7 +2,13 @@ import bcrypt from 'bcrypt';
 import { UserModel } from '../users/users.models';
 import { UserRole } from '../../types/enums';
 import { ISessionUser } from '../../types/common';
-import { UnauthorizedError, ForbiddenError, ConflictError, NotFoundError, AppError } from '../../utils/errors';
+import {
+  UnauthorizedError,
+  ForbiddenError,
+  ConflictError,
+  NotFoundError,
+  AppError,
+} from '../../utils/errors';
 import config from '../../config/config';
 import logger from '../../utils/logger';
 import { generatePassword } from '../../utils/password';
@@ -136,11 +142,7 @@ export const sendGodUserCredentials = async (): Promise<void> => {
     'ROAS PrintFast',
   ].join('\n');
 
-  await sendEmail(
-    config.godUserEmail,
-    'ROAS PrintFast — Super Admin Credentials',
-    emailText,
-  );
+  await sendEmail(config.godUserEmail, 'ROAS PrintFast — Super Admin Credentials', emailText);
 
   logger.info(`God User credentials reset and sent to ${config.godUserEmail}`);
 };

@@ -16,6 +16,8 @@ import usersRoutes from './features/users/users.routes';
 import configRoutes from './features/config/config.routes';
 import vendorsRoutes from './features/vendors/vendors.routes';
 import campaignsRoutes from './features/campaigns/campaigns.routes';
+import uploadRoutes from './features/upload/upload.routes';
+import integrationsRoutes from './features/integrations/integrations.routes';
 
 const app = express();
 
@@ -50,6 +52,8 @@ app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/config', configRoutes);
 app.use('/api/v1/vendors', vendorsRoutes);
 app.use('/api/v1/campaigns', campaignsRoutes);
+app.use('/api/v1/upload', uploadRoutes);
+app.use('/api/v1/integrations', integrationsRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.resolve(__dirname, '../../uploads')));

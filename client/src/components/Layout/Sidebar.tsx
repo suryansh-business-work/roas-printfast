@@ -4,7 +4,6 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -14,6 +13,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CampaignIcon from '@mui/icons-material/Campaign';
+import IntegrationInstructionsIcon from '@mui/icons-material/IntegrationInstructions';
 import { useAuth } from '../../hooks/useAuth';
 import { UserRole } from '../../types/user.types';
 
@@ -48,6 +48,12 @@ const menuItems: MenuItem[] = [
     icon: <CampaignIcon />,
     path: '/campaigns',
     roles: [UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER],
+  },
+  {
+    label: 'Integrations',
+    icon: <IntegrationInstructionsIcon />,
+    path: '/integrations',
+    roles: [UserRole.GOD_USER, UserRole.ADMIN_USER],
   },
   {
     label: 'Reports',
@@ -101,15 +107,37 @@ const Sidebar = ({
 
   const drawerContent = (
     <>
-      <Toolbar>
+      <Box
+        sx={{
+          height: 48,
+          display: 'flex',
+          alignItems: 'center',
+          px: 2,
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
         {!collapsed && (
-          <Typography variant="h6" noWrap sx={{ fontWeight: 700, color: 'primary.main' }}>
+          <Typography
+            variant="subtitle1"
+            noWrap
+            sx={{ fontWeight: 700, color: 'primary.main', fontSize: '0.95rem' }}
+          >
             ROAS PrintFast
           </Typography>
         )}
-      </Toolbar>
-      <Box sx={{ overflow: 'auto' }}>
-        <List>
+        {collapsed && (
+          <Typography
+            variant="subtitle1"
+            noWrap
+            sx={{ fontWeight: 700, color: 'primary.main', mx: 'auto' }}
+          >
+            RP
+          </Typography>
+        )}
+      </Box>
+      <Box sx={{ overflow: 'auto', pt: 0.5 }}>
+        <List dense disablePadding>
           {filteredItems.map((item) => (
             <ListItemButton
               key={item.path}
@@ -118,27 +146,36 @@ const Sidebar = ({
               }
               onClick={() => handleNavigation(item.path)}
               sx={{
-                minHeight: 48,
+                minHeight: 40,
                 justifyContent: collapsed ? 'center' : 'initial',
-                px: 2.5,
+                px: 2,
+                py: 0.5,
+                mx: 0.5,
+                borderRadius: 1,
                 '&.Mui-selected': {
-                  backgroundColor: 'primary.light',
+                  backgroundColor: 'primary.main',
                   color: 'white',
                   '& .MuiListItemIcon-root': { color: 'white' },
-                  '&:hover': { backgroundColor: 'primary.main' },
+                  '&:hover': { backgroundColor: 'primary.dark' },
                 },
               }}
             >
               <ListItemIcon
                 sx={{
                   minWidth: 0,
-                  mr: collapsed ? 'auto' : 3,
+                  mr: collapsed ? 'auto' : 2,
                   justifyContent: 'center',
+                  '& .MuiSvgIcon-root': { fontSize: '1.2rem' },
                 }}
               >
                 {item.icon}
               </ListItemIcon>
-              {!collapsed && <ListItemText primary={item.label} />}
+              {!collapsed && (
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{ fontSize: '0.8125rem', fontWeight: 500 }}
+                />
+              )}
             </ListItemButton>
           ))}
         </List>

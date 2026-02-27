@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import path from 'path';
-import fs from 'fs';
 import * as campaignsService from './campaigns.services';
+import * as uploadService from '../upload/upload.services';
 import { sendSuccess } from '../../utils/response';
 import {
   CreateCampaignInput,
@@ -9,7 +8,6 @@ import {
   UpdateCampaignWeekInput,
   ListCampaignsQuery,
 } from './campaigns.validators';
-import logger from '../../utils/logger';
 
 export const createCampaign = async (
   req: Request,
@@ -101,7 +99,7 @@ export const updateCampaignWeek = async (
   }
 };
 
-export const uploadPostcardImage = async (
+export const uploadPostcardPdf = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -110,23 +108,24 @@ export const uploadPostcardImage = async (
     if (!req.file) {
       res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'Image file is required' },
+        error: { code: 'VALIDATION_ERROR', message: 'PDF file is required' },
       });
       return;
     }
 
-    const imageUrl = `/uploads/postcards/${req.file.filename}`;
-    const campaign = await campaignsService.updatePostcardImage(req.params.id as string, imageUrl);
+    const result = await uploadService.uploadFile(
+      req.file.buffer,
+      req.file.originalname,
+      'postcards',
+    );
 
-    sendSuccess(res, campaign, 'Postcard image uploaded successfully');
+    const campaign = await campaignsService.updatePostcardImage(
+      req.params.id as string,
+      result.url,
+    );
+
+    sendSuccess(res, campaign, 'Postcard PDF uploaded successfully');
   } catch (error) {
-    // Clean up uploaded file on error
-    if (req.file) {
-      const filePath = req.file.path;
-      fs.unlink(filePath, (err) => {
-        if (err) logger.error('Failed to clean up uploaded file:', err);
-      });
-    }
     next(error);
   }
 };
@@ -156,9 +155,3 @@ export const activateCampaign = async (
     next(error);
   }
 };
-
-// Ensure uploads directory exists
-const uploadsDir = path.resolve(__dirname, '../../../../uploads/postcards');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}

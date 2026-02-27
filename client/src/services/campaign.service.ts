@@ -46,7 +46,7 @@ export const updateCampaign = async (
   return response.data;
 };
 
-export const uploadPostcardImage = async (
+export const uploadPostcardPdf = async (
   id: string,
   file: File,
 ): Promise<IApiResponse<ICampaignDetail>> => {
