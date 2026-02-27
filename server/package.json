@@ -11,6 +11,7 @@
     "lint": "eslint src/ --ext .ts",
     "lint:fix": "eslint src/ --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
     "seed:god-user": "tsx src/scripts/seed-god-user.ts"
   },
   "dependencies": {

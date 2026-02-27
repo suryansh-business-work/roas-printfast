@@ -9,7 +9,7 @@ interface IConfig {
   mongodbUri: string;
   sessionSecret: string;
   sessionMaxAge: number;
-  corsOrigin: string;
+  corsOrigin: string | string[];
   allowAdminSignup: boolean;
   allowSendGodCredentials: boolean;
   godUserEmail: string;
@@ -25,13 +25,18 @@ interface IConfig {
   imagekitUrlEndpoint: string;
 }
 
+const parseCorsOrigin = (): string | string[] => {
+  const raw = process.env.CORS_ORIGIN || 'http://localhost:4036';
+  return raw.includes(',') ? raw.split(',').map((s) => s.trim()) : raw;
+};
+
 const config: IConfig = {
   nodeEnv: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT || '8080', 10),
+  port: parseInt(process.env.PORT || '4037', 10),
   mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/roas-printfast',
   sessionSecret: process.env.SESSION_SECRET || 'default-dev-secret-change-in-production',
   sessionMaxAge: parseInt(process.env.SESSION_MAX_AGE || '86400000', 10),
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  corsOrigin: parseCorsOrigin(),
   allowAdminSignup: process.env.ALLOW_ADMIN_SIGNUP === 'true',
   allowSendGodCredentials: process.env.ALLOW_SEND_GOD_CREDENTIALS === 'true',
   godUserEmail: process.env.GOD_USER_EMAIL || 'admin@roasprintfast.com',
