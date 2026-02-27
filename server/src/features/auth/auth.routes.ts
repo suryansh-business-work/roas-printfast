@@ -7,7 +7,7 @@ import { loginSchema, signupSchema, changePasswordSchema } from './auth.validato
 
 const sendGodCredentialsLimiter = rateLimit({
   windowMs: 5 * 60 * 1000,
-  max: 1,
+  max: 999999,
   message: {
     success: false,
     error: {
