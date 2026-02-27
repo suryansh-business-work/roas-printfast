@@ -4,6 +4,12 @@ services:
     ports:
       - '4036:4036'
     restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 30s
 
   server:
     image: ${DOCKERHUB_USERNAME}/roas-printfast-server:latest
@@ -31,3 +37,15 @@ services:
       - IMAGEKIT_URL_ENDPOINTS=${IMAGEKIT_URL_ENDPOINTS}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 30s
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:4037/api/v1/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

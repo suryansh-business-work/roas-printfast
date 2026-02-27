@@ -205,6 +205,12 @@ jobs:
                 env_file:
                   - .env
                 restart: unless-stopped
+                healthcheck:
+                  test: ["CMD", "wget", "--spider", "-q", "http://localhost:4037/api/v1/health"]
+                  interval: 30s
+                  timeout: 10s
+                  retries: 3
+                  start_period: 15s
             COMPOSEEOF
 
             # Trim workflow indentation (12 spaces) from docker-compose.yml — preserves YAML structure
