@@ -28,7 +28,7 @@ export const connectServiceTitan = async (
 ): Promise<void> => {
   try {
     const data = req.body as ConnectServiceTitanInput;
-    const creatorId = req.session.user!.userId;
+    const creatorId = req.user!.userId;
 
     const integration = await integrationsService.connectServiceTitan(
       data.vendorId,
@@ -52,7 +52,7 @@ export const connectJobber = async (
 ): Promise<void> => {
   try {
     const data = req.body as ConnectJobberInput;
-    const creatorId = req.session.user!.userId;
+    const creatorId = req.user!.userId;
 
     const integration = await integrationsService.connectJobber(
       data.vendorId,

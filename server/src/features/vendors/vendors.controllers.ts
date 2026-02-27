@@ -10,7 +10,7 @@ export const createVendor = async (
 ): Promise<void> => {
   try {
     const data = req.body as CreateVendorInput;
-    const creatorId = req.session.user!.userId;
+    const creatorId = req.user!.userId;
 
     const vendor = await vendorsService.createVendor({
       ...data,

@@ -1,13 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import session from 'express-session';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 
 import config from './config/config';
 import connectDatabase from './config/database';
-import sessionConfig from './config/session';
 import { errorMiddleware } from './middleware/error.middleware';
 import logger from './utils/logger';
 
@@ -33,9 +31,6 @@ app.use(
 // Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Session
-app.use(session(sessionConfig));
 
 // Rate limiting for auth routes
 const authLimiter = rateLimit({

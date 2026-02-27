@@ -5,3 +5,9 @@ declare module 'express-session' {
     user: ISessionUser;
   }
 }
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: ISessionUser;
+  }
+}

@@ -12,6 +12,10 @@ export interface IUser {
   role: UserRole;
 }
 
+export interface IAuthUser extends IUser {
+  token: string;
+}
+
 export interface IUserDetail extends IUser {
   isActive: boolean;
   createdBy: string | null;

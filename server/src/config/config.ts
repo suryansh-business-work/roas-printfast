@@ -9,6 +9,8 @@ interface IConfig {
   mongodbUri: string;
   sessionSecret: string;
   sessionMaxAge: number;
+  jwtSecret: string;
+  jwtExpiresIn: string;
   corsOrigin: string | string[];
   allowAdminSignup: boolean;
   allowSendGodCredentials: boolean;
@@ -36,10 +38,12 @@ const config: IConfig = {
   mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/roas-printfast',
   sessionSecret: process.env.SESSION_SECRET || 'default-dev-secret-change-in-production',
   sessionMaxAge: parseInt(process.env.SESSION_MAX_AGE || '86400000', 10),
+  jwtSecret: process.env.JWT_SECRET || 'default-jwt-secret-change-in-production',
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN || '24h',
   corsOrigin: parseCorsOrigin(),
   allowAdminSignup: process.env.ALLOW_ADMIN_SIGNUP === 'true',
   allowSendGodCredentials: process.env.ALLOW_SEND_GOD_CREDENTIALS === 'true',
-  godUserEmail: process.env.GOD_USER_EMAIL || 'admin@roasprintfast.com',
+  godUserEmail: process.env.GOD_USER_EMAIL || 'suryansh@exyconn.com',
   godUserPassword: process.env.GOD_USER_PASSWORD || 'ChangeThisPassword123!',
   godUserFirstName: process.env.GOD_USER_FIRST_NAME || 'Super',
   godUserLastName: process.env.GOD_USER_LAST_NAME || 'Admin',

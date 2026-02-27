@@ -16,7 +16,7 @@ export const createCampaign = async (
 ): Promise<void> => {
   try {
     const data = req.body as CreateCampaignInput;
-    const creatorId = req.session.user!.userId;
+    const creatorId = req.user!.userId;
 
     const campaign = await campaignsService.createCampaign({
       ...data,

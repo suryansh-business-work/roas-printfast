@@ -11,8 +11,8 @@ export const createUser = async (
 ): Promise<void> => {
   try {
     const data = req.body as CreateUserInput;
-    const creatorId = req.session.user!.userId;
-    const creatorRole = req.session.user!.role;
+    const creatorId = req.user!.userId;
+    const creatorRole = req.user!.role;
 
     const user = await usersService.createUser(
       {
@@ -107,7 +107,7 @@ export const getProfile = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const user = await usersService.getUserById(req.session.user!.userId);
+    const user = await usersService.getUserById(req.user!.userId);
     sendSuccess(res, user);
   } catch (error) {
     next(error);
@@ -121,15 +121,8 @@ export const updateProfile = async (
 ): Promise<void> => {
   try {
     const data = req.body as UpdateUserInput;
-    const userId = req.session.user!.userId;
+    const userId = req.user!.userId;
     const user = await usersService.updateUser(userId, data);
-
-    req.session.user = {
-      ...req.session.user!,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-    };
 
     sendSuccess(res, user, 'Profile updated successfully');
   } catch (error) {

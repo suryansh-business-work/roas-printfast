@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { IUser, UserRole } from '../types/user.types';
 import * as authService from '../services/auth.service';
+import { getStoredToken, removeStoredToken } from '../services/api';
 
 interface IAuthContext {
   user: IUser | null;
@@ -29,13 +30,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const checkSession = useCallback(async () => {
+  const checkAuth = useCallback(async () => {
+    const token = getStoredToken();
+    if (!token) {
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
     try {
       const response = await authService.getMe();
       if (response.success && response.data) {
         setUser(response.data);
       }
     } catch {
+      removeStoredToken();
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -43,8 +51,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   useEffect(() => {
-    checkSession();
-  }, [checkSession]);
+    checkAuth();
+  }, [checkAuth]);
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await authService.login({ email, password });
@@ -71,7 +79,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 
   const logout = useCallback(async () => {
-    await authService.logout();
+    try {
+      await authService.logout();
+    } catch {
+      // Even if API call fails, clear local token
+    }
+    removeStoredToken();
     setUser(null);
   }, []);
 
