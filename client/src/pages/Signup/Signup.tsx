@@ -128,6 +128,18 @@ const Signup = () => {
           <LockOutlinedIcon sx={{ fontSize: 14 }} /> Secured by SSL
         </Typography>
       </Box>
+
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 3 }}>
+        <Box
+          component="img"
+          src="https://ik.imagekit.io/esdata1/roas/print-fast.png"
+          alt="Print Fast"
+          sx={{ height: 32, mb: 0.5 }}
+        />
+        <Typography variant="caption" color="text.secondary">
+          Property of Print Fast
+        </Typography>
+      </Box>
     </AuthLayout>
   );
 };

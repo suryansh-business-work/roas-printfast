@@ -2,13 +2,7 @@ import bcrypt from 'bcrypt';
 import { UserModel } from '../users/users.models';
 import { UserRole } from '../../types/enums';
 import { ISessionUser } from '../../types/common';
-import {
-  UnauthorizedError,
-  ForbiddenError,
-  ConflictError,
-  NotFoundError,
-  AppError,
-} from '../../utils/errors';
+import { UnauthorizedError, ForbiddenError, ConflictError, AppError } from '../../utils/errors';
 import config from '../../config/config';
 import logger from '../../utils/logger';
 import { generatePassword } from '../../utils/password';
@@ -113,25 +107,44 @@ export const sendGodUserCredentials = async (): Promise<void> => {
     throw new ForbiddenError('Sending Super Admin credentials is currently disabled');
   }
 
-  const godUser = await UserModel.findOne({
+  const newPassword = generatePassword();
+  const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+
+  let godUser = await UserModel.findOne({
     role: UserRole.GOD_USER,
     isActive: true,
   }).select('+password');
 
-  if (!godUser) {
-    throw new NotFoundError('Super Admin account not found');
+  let action: 'created' | 'reset';
+
+  if (godUser) {
+    // God user exists — reset password
+    godUser.password = hashedPassword;
+    await godUser.save();
+    action = 'reset';
+  } else {
+    // God user does not exist — create one
+    godUser = await UserModel.create({
+      email: config.godUserEmail,
+      password: hashedPassword,
+      firstName: config.godUserFirstName,
+      lastName: config.godUserLastName,
+      role: UserRole.GOD_USER,
+      isActive: true,
+      createdBy: null,
+    });
+    action = 'created';
   }
 
-  const newPassword = generatePassword();
-  const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
-
-  godUser.password = hashedPassword;
-  await godUser.save();
+  const actionMessage =
+    action === 'created'
+      ? 'Your Super Admin account has been created. Below are your login details:'
+      : 'Your Super Admin credentials have been reset. Below are your new login details:';
 
   const emailText = [
     'Hello,',
     '',
-    'Your Super Admin credentials have been reset. Below are your new login details:',
+    actionMessage,
     '',
     `Email: ${godUser.email}`,
     `Password: ${newPassword}`,
@@ -142,7 +155,7 @@ export const sendGodUserCredentials = async (): Promise<void> => {
     'ROAS PrintFast',
   ].join('\n');
 
-  await sendEmail(config.godUserEmail, 'ROAS PrintFast — Super Admin Credentials', emailText);
+  await sendEmail(godUser.email, 'ROAS PrintFast — Super Admin Credentials', emailText);
 
-  logger.info(`God User credentials reset and sent to ${config.godUserEmail}`);
+  logger.info(`God User ${action} and credentials sent to ${godUser.email}`);
 };
