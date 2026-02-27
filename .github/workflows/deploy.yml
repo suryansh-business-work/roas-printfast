@@ -186,8 +186,8 @@ jobs:
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             ENVEOF
 
-            # Trim leading whitespace from .env lines
-            sed -i 's/^[[:space:]]*//' .env
+            # Trim workflow indentation (12 spaces) from .env lines
+            sed -i 's/^            //' .env
 
             # Create docker-compose.yml
             cat > docker-compose.yml << 'COMPOSEEOF'
@@ -207,8 +207,8 @@ jobs:
                 restart: unless-stopped
             COMPOSEEOF
 
-            # Trim leading whitespace from docker-compose.yml
-            sed -i 's/^[[:space:]]*//' docker-compose.yml
+            # Trim workflow indentation (12 spaces) from docker-compose.yml — preserves YAML structure
+            sed -i 's/^            //' docker-compose.yml
 
             # Pull latest images and deploy
             docker compose pull
