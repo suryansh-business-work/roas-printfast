@@ -142,3 +142,34 @@ Restart the server. The signup page will now show the Admin role option.
 ## License
 
 Private — All rights reserved.
+
+
+GOD/ADMIN
+1. Can create multiple admin accounts
+2. god and admin user can create multiple vendors
+3. god nav menu - dashboard, Vendors(CRUD vendors), 
+    business address, email, phone, on vendor create send login credentials, edit vendor, send credentials, view password 
+4. For GOD Create admin user similar to vendor but admin user
+5. hide users and vendors for users other than god and admin
+
+
+
+For vendor user - 
+1. Dashboard - total no of campaigns, clients, postcards, product services
+2. ROAS Dashboard - 
+7. Current campaings - 
+3. Product & Services - name, description and images
+4. Postcard - name, description and images
+5. Clients - name, email, label, Category, tag
+6. Campaigns - name, description, start and end date, 
+    For each week there should be select client - in pop - 
+7. Integrations - Job, Invoice, User lists
+    two tables for Job and invoice at our side for job and invoice
+
+
+1. Dynamic table for react and mongodb with common reusable components
+Search, sort, filter, pagination middleware.
+2. For Diff user diff things.
+3. For God and admin - admin cannot see admin list.
+4. Vendors.
+5. Integration - with common data format for ServiceTitan and Jobber

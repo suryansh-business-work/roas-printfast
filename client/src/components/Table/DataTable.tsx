@@ -11,12 +11,19 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import TablePagination from '@mui/material/TablePagination';
 import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import SearchIcon from '@mui/icons-material/Search';
+import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+import TableFilterRow from './TableFilterRow';
 
 export interface Column<T> {
   id: keyof T | string;
   label: string;
   sortable?: boolean;
+  filterable?: boolean;
+  filterType?: 'text' | 'select';
+  filterOptions?: { value: string; label: string }[];
   render?: (row: T) => React.ReactNode;
   minWidth?: number;
 }
@@ -34,6 +41,8 @@ interface DataTableProps<T> {
   onRowsPerPageChange: (rowsPerPage: number) => void;
   onSortChange: (field: string) => void;
   onSearchChange: (search: string) => void;
+  filters?: Record<string, string>;
+  onFiltersChange?: (filters: Record<string, string>) => void;
   isLoading?: boolean;
   getRowKey: (row: T) => string;
 }
@@ -51,10 +60,15 @@ const DataTable = <T,>({
   onRowsPerPageChange,
   onSortChange,
   onSearchChange,
+  filters,
+  onFiltersChange,
   isLoading,
   getRowKey,
 }: DataTableProps<T>) => {
   const [localSearch, setLocalSearch] = useState(searchValue);
+  const [filterKey, setFilterKey] = useState(0);
+
+  const hasActiveFilters = filters && Object.values(filters).some((v) => v !== '');
 
   const handleSearchChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -67,9 +81,28 @@ const DataTable = <T,>({
     [onSearchChange],
   );
 
+  const handleFilterChange = useCallback(
+    (field: string, value: string) => {
+      if (!onFiltersChange || !filters) return;
+      const updated = { ...filters };
+      if (value) {
+        updated[field] = value;
+      } else {
+        delete updated[field];
+      }
+      onFiltersChange(updated);
+    },
+    [filters, onFiltersChange],
+  );
+
+  const handleClearFilters = useCallback(() => {
+    onFiltersChange?.({});
+    setFilterKey((k) => k + 1);
+  }, [onFiltersChange]);
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
         <TextField
           size="small"
           placeholder="Search..."
@@ -84,6 +117,13 @@ const DataTable = <T,>({
           }}
           sx={{ minWidth: 300 }}
         />
+        {hasActiveFilters && (
+          <Tooltip title="Clear all filters">
+            <IconButton size="small" onClick={handleClearFilters} color="primary">
+              <FilterListOffIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
       <TableContainer>
         <Table stickyHeader>
@@ -105,6 +145,14 @@ const DataTable = <T,>({
                 </TableCell>
               ))}
             </TableRow>
+            {filters && onFiltersChange && (
+              <TableFilterRow
+                key={filterKey}
+                columns={columns}
+                filters={filters}
+                onFilterChange={handleFilterChange}
+              />
+            )}
           </TableHead>
           <TableBody>
             {isLoading ? (

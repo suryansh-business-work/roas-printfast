@@ -64,6 +64,9 @@ export const listCampaignsQuerySchema = z.object({
   search: z.string().optional(),
   vendor: z.string().optional(),
   isActive: z.enum(['true', 'false']).optional(),
+  name: z.string().optional(),
+  currentProduct: z.string().optional(),
+  vendorName: z.string().optional(),
 });
 
 export const campaignIdParamSchema = z.object({

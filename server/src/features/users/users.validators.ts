@@ -40,6 +40,9 @@ export const listUsersQuerySchema = z.object({
   search: z.string().optional(),
   role: z.enum([UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER]).optional(),
   isActive: z.enum(['true', 'false']).optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  email: z.string().optional(),
 });
 
 export const userIdParamSchema = z.object({

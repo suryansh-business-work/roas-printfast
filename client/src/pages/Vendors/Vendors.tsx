@@ -15,16 +15,28 @@ import { UserRole } from '../../types/user.types';
 import CreateVendorDialog from './CreateVendorDialog';
 
 const columns: Column<IVendor>[] = [
-  { id: 'name', label: 'Name', minWidth: 150 },
-  { id: 'email', label: 'Email', minWidth: 200 },
-  { id: 'phone', label: 'Phone', minWidth: 130 },
-  { id: 'contactPerson', label: 'Contact Person', minWidth: 150 },
-  { id: 'city', label: 'City', minWidth: 120 },
-  { id: 'state', label: 'State', minWidth: 100 },
+  { id: 'name', label: 'Name', minWidth: 150, filterable: true, filterType: 'text' },
+  { id: 'email', label: 'Email', minWidth: 200, filterable: true, filterType: 'text' },
+  { id: 'phone', label: 'Phone', minWidth: 130, filterable: true, filterType: 'text' },
+  {
+    id: 'contactPerson',
+    label: 'Contact Person',
+    minWidth: 150,
+    filterable: true,
+    filterType: 'text',
+  },
+  { id: 'city', label: 'City', minWidth: 120, filterable: true, filterType: 'text' },
+  { id: 'state', label: 'State', minWidth: 100, filterable: true, filterType: 'text' },
   {
     id: 'isActive',
     label: 'Status',
     minWidth: 100,
+    filterable: true,
+    filterType: 'select',
+    filterOptions: [
+      { value: 'true', label: 'Active' },
+      { value: 'false', label: 'Inactive' },
+    ],
     render: (row) => (
       <Chip
         label={row.isActive ? 'Active' : 'Inactive'}
@@ -52,6 +64,7 @@ const Vendors = () => {
   const [sortField, setSortField] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [search, setSearch] = useState('');
+  const [filters, setFilters] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -65,6 +78,7 @@ const Vendors = () => {
         sort: sortField,
         order: sortOrder,
         search: search || undefined,
+        filters,
       });
       if (response.success && response.data) {
         setRows(response.data.items);
@@ -75,7 +89,7 @@ const Vendors = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, rowsPerPage, sortField, sortOrder, search]);
+  }, [page, rowsPerPage, sortField, sortOrder, search, filters]);
 
   useEffect(() => {
     fetchVendors();
@@ -129,6 +143,11 @@ const Vendors = () => {
         onSortChange={handleSortChange}
         onSearchChange={(s) => {
           setSearch(s);
+          setPage(0);
+        }}
+        filters={filters}
+        onFiltersChange={(f) => {
+          setFilters(f);
           setPage(0);
         }}
         isLoading={isLoading}

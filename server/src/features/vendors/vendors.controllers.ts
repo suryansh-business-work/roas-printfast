@@ -38,6 +38,12 @@ export const listVendors = async (
       order: query.order || 'desc',
       search: query.search,
       isActive: query.isActive ? query.isActive === 'true' : undefined,
+      name: query.name,
+      email: query.email,
+      phone: query.phone,
+      contactPerson: query.contactPerson,
+      city: query.city,
+      state: query.state,
     });
 
     sendSuccess(res, result);

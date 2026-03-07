@@ -12,7 +12,7 @@ import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import { DataTable, Column } from '../../components/Table';
-import { ICampaignListItem } from '../../types/campaign.types';
+import { ICampaignListItem, PRODUCT_OPTIONS } from '../../types/campaign.types';
 import { useAuth } from '../../hooks/useAuth';
 import { UserRole } from '../../types/user.types';
 import * as campaignService from '../../services/campaign.service';
@@ -30,6 +30,7 @@ const Campaigns = () => {
   const [sortField, setSortField] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [search, setSearch] = useState('');
+  const [filters, setFilters] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -39,9 +40,28 @@ const Campaigns = () => {
   });
 
   const columns: Column<ICampaignListItem>[] = [
-    { id: 'name', label: 'Campaign Name', minWidth: 180 },
-    { id: 'vendorName', label: 'Vendor', minWidth: 150 },
-    { id: 'currentProduct', label: 'Product', minWidth: 180 },
+    {
+      id: 'name',
+      label: 'Campaign Name',
+      minWidth: 180,
+      filterable: true,
+      filterType: 'text',
+    },
+    {
+      id: 'vendorName',
+      label: 'Vendor',
+      minWidth: 150,
+      filterable: true,
+      filterType: 'text',
+    },
+    {
+      id: 'currentProduct',
+      label: 'Product',
+      minWidth: 180,
+      filterable: true,
+      filterType: 'select',
+      filterOptions: PRODUCT_OPTIONS.map((p) => ({ value: p, label: p })),
+    },
     { id: 'totalMailingQuantity', label: 'Total Qty', minWidth: 100 },
     { id: 'totalWeeks', label: 'Weeks', minWidth: 80 },
     {
@@ -54,6 +74,12 @@ const Campaigns = () => {
       id: 'isActive',
       label: 'Status',
       minWidth: 100,
+      filterable: true,
+      filterType: 'select',
+      filterOptions: [
+        { value: 'true', label: 'Active' },
+        { value: 'false', label: 'Inactive' },
+      ],
       render: (row) => (
         <Chip
           label={row.isActive ? 'Active' : 'Inactive'}
@@ -86,6 +112,7 @@ const Campaigns = () => {
         sort: sortField,
         order: sortOrder,
         search: search || undefined,
+        filters,
       });
       if (response.success && response.data) {
         setRows(response.data.items);
@@ -96,7 +123,7 @@ const Campaigns = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, rowsPerPage, sortField, sortOrder, search]);
+  }, [page, rowsPerPage, sortField, sortOrder, search, filters]);
 
   useEffect(() => {
     fetchCampaigns();
@@ -150,6 +177,11 @@ const Campaigns = () => {
         onSortChange={handleSortChange}
         onSearchChange={(s) => {
           setSearch(s);
+          setPage(0);
+        }}
+        filters={filters}
+        onFiltersChange={(f) => {
+          setFilters(f);
           setPage(0);
         }}
         isLoading={isLoading}

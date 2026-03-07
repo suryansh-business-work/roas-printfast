@@ -45,6 +45,9 @@ export const listCampaigns = async (
       search: query.search,
       vendor: query.vendor,
       isActive: query.isActive ? query.isActive === 'true' : undefined,
+      name: query.name,
+      currentProduct: query.currentProduct,
+      vendorName: query.vendorName,
     });
 
     sendSuccess(res, result);

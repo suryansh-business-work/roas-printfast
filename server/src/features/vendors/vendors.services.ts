@@ -22,6 +22,12 @@ interface ListVendorsParams {
   order: 'asc' | 'desc';
   search?: string;
   isActive?: boolean;
+  name?: string;
+  email?: string;
+  phone?: string;
+  contactPerson?: string;
+  city?: string;
+  state?: string;
 }
 
 interface VendorResponse {
@@ -70,7 +76,20 @@ export const createVendor = async (data: CreateVendorData): Promise<VendorRespon
 export const listVendors = async (
   params: ListVendorsParams,
 ): Promise<IPaginatedResult<VendorResponse>> => {
-  const { page, limit, sort, order, search, isActive } = params;
+  const {
+    page,
+    limit,
+    sort,
+    order,
+    search,
+    isActive,
+    name,
+    email,
+    phone,
+    contactPerson,
+    city,
+    state,
+  } = params;
 
   const filter: Record<string, unknown> = {};
   if (isActive !== undefined) {
@@ -82,6 +101,26 @@ export const listVendors = async (
       { email: { $regex: search, $options: 'i' } },
       { contactPerson: { $regex: search, $options: 'i' } },
     ];
+  }
+
+  // Column-level filters
+  if (name) {
+    filter.name = { $regex: name, $options: 'i' };
+  }
+  if (email) {
+    filter.email = { $regex: email, $options: 'i' };
+  }
+  if (phone) {
+    filter.phone = { $regex: phone, $options: 'i' };
+  }
+  if (contactPerson) {
+    filter.contactPerson = { $regex: contactPerson, $options: 'i' };
+  }
+  if (city) {
+    filter.city = { $regex: city, $options: 'i' };
+  }
+  if (state) {
+    filter.state = { $regex: state, $options: 'i' };
   }
 
   const totalItems = await VendorModel.countDocuments(filter);

@@ -29,6 +29,9 @@ interface ListUsersParams {
   search?: string;
   role?: UserRole;
   isActive?: boolean;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
 }
 
 interface UserResponse {
@@ -101,7 +104,7 @@ export const createUser = async (
 export const listUsers = async (
   params: ListUsersParams,
 ): Promise<IPaginatedResult<UserResponse>> => {
-  const { page, limit, sort, order, search, role, isActive } = params;
+  const { page, limit, sort, order, search, role, isActive, firstName, lastName, email } = params;
 
   const filter: Record<string, unknown> = {};
 
@@ -116,6 +119,17 @@ export const listUsers = async (
   if (search) {
     const searchRegex = new RegExp(search, 'i');
     filter.$or = [{ firstName: searchRegex }, { lastName: searchRegex }, { email: searchRegex }];
+  }
+
+  // Column-level filters
+  if (firstName) {
+    filter.firstName = { $regex: firstName, $options: 'i' };
+  }
+  if (lastName) {
+    filter.lastName = { $regex: lastName, $options: 'i' };
+  }
+  if (email) {
+    filter.email = { $regex: email, $options: 'i' };
   }
 
   const skip = (page - 1) * limit;

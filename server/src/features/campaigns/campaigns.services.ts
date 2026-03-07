@@ -48,6 +48,9 @@ interface ListCampaignsParams {
   search?: string;
   vendor?: string;
   isActive?: boolean;
+  name?: string;
+  currentProduct?: string;
+  vendorName?: string;
 }
 
 interface CampaignWeekResponse {
@@ -218,7 +221,8 @@ export const createCampaign = async (data: CreateCampaignData): Promise<Campaign
 export const listCampaigns = async (
   params: ListCampaignsParams,
 ): Promise<IPaginatedResult<CampaignListItem>> => {
-  const { page, limit, sort, order, search, vendor, isActive } = params;
+  const { page, limit, sort, order, search, vendor, isActive, name, currentProduct, vendorName } =
+    params;
 
   const filter: Record<string, unknown> = {};
   if (isActive !== undefined) {
@@ -232,6 +236,25 @@ export const listCampaigns = async (
       { name: { $regex: search, $options: 'i' } },
       { currentProduct: { $regex: search, $options: 'i' } },
     ];
+  }
+
+  // Column-level filters
+  if (name) {
+    filter.name = { $regex: name, $options: 'i' };
+  }
+  if (currentProduct) {
+    filter.currentProduct = { $regex: currentProduct, $options: 'i' };
+  }
+  if (vendorName && !vendor) {
+    const matchingVendors = await VendorModel.find({
+      name: { $regex: vendorName, $options: 'i' },
+    }).select('_id');
+    const vendorIds = matchingVendors.map((v) => v._id);
+    if (vendorIds.length > 0) {
+      filter.vendor = { $in: vendorIds };
+    } else {
+      return { items: [], totalItems: 0, totalPages: 0, currentPage: page, limit };
+    }
   }
 
   const totalItems = await CampaignModel.countDocuments(filter);

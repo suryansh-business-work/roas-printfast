@@ -8,19 +8,26 @@ import Alert from '@mui/material/Alert';
 import AddIcon from '@mui/icons-material/Add';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import { DataTable, Column } from '../../components/Table';
-import { IUserDetail, ICreateUserResponse } from '../../types/user.types';
+import { IUserDetail, ICreateUserResponse, UserRole } from '../../types/user.types';
 import * as userService from '../../services/user.service';
 import CreateUserDialog from './CreateUserDialog';
 import PasswordRevealDialog from './PasswordRevealDialog';
 
 const columns: Column<IUserDetail>[] = [
-  { id: 'firstName', label: 'First Name', minWidth: 120 },
-  { id: 'lastName', label: 'Last Name', minWidth: 120 },
-  { id: 'email', label: 'Email', minWidth: 200 },
+  { id: 'firstName', label: 'First Name', minWidth: 120, filterable: true, filterType: 'text' },
+  { id: 'lastName', label: 'Last Name', minWidth: 120, filterable: true, filterType: 'text' },
+  { id: 'email', label: 'Email', minWidth: 200, filterable: true, filterType: 'text' },
   {
     id: 'role',
     label: 'Role',
     minWidth: 120,
+    filterable: true,
+    filterType: 'select',
+    filterOptions: [
+      { value: UserRole.GOD_USER, label: 'God User' },
+      { value: UserRole.ADMIN_USER, label: 'Admin User' },
+      { value: UserRole.VENDOR_USER, label: 'Vendor User' },
+    ],
     render: (row) => {
       const label = row.role
         .split('_')
@@ -33,6 +40,12 @@ const columns: Column<IUserDetail>[] = [
     id: 'isActive',
     label: 'Status',
     minWidth: 100,
+    filterable: true,
+    filterType: 'select',
+    filterOptions: [
+      { value: 'true', label: 'Active' },
+      { value: 'false', label: 'Inactive' },
+    ],
     render: (row) => (
       <Chip
         label={row.isActive ? 'Active' : 'Inactive'}
@@ -57,6 +70,7 @@ const Users = () => {
   const [sortField, setSortField] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [search, setSearch] = useState('');
+  const [filters, setFilters] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
@@ -72,6 +86,7 @@ const Users = () => {
         sort: sortField,
         order: sortOrder,
         search: search || undefined,
+        filters,
       });
       if (response.success && response.data) {
         setRows(response.data.items);
@@ -82,7 +97,7 @@ const Users = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, rowsPerPage, sortField, sortOrder, search]);
+  }, [page, rowsPerPage, sortField, sortOrder, search, filters]);
 
   useEffect(() => {
     fetchUsers();
@@ -138,6 +153,11 @@ const Users = () => {
         onSortChange={handleSortChange}
         onSearchChange={(s) => {
           setSearch(s);
+          setPage(0);
+        }}
+        filters={filters}
+        onFiltersChange={(f) => {
+          setFilters(f);
           setPage(0);
         }}
         isLoading={isLoading}

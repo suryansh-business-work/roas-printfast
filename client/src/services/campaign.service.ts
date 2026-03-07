@@ -13,15 +13,23 @@ interface ListCampaignsParams {
   sort?: string;
   order?: 'asc' | 'desc';
   search?: string;
-  vendor?: string;
-  isActive?: string;
+  filters?: Record<string, string>;
 }
 
 export const listCampaigns = async (
   params: ListCampaignsParams,
 ): Promise<IApiResponse<IPaginatedResult<ICampaignListItem>>> => {
+  const { filters, ...rest } = params;
+  const queryParams: Record<string, unknown> = { ...rest };
+  if (filters) {
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== '') {
+        queryParams[key] = value;
+      }
+    });
+  }
   const response = await api.get<IApiResponse<IPaginatedResult<ICampaignListItem>>>('/campaigns', {
-    params,
+    params: queryParams,
   });
   return response.data;
 };

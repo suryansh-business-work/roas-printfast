@@ -32,6 +32,12 @@ export const listVendorsQuerySchema = z.object({
   order: z.enum(['asc', 'desc']).optional().default('desc'),
   search: z.string().optional(),
   isActive: z.enum(['true', 'false']).optional(),
+  name: z.string().optional(),
+  email: z.string().optional(),
+  phone: z.string().optional(),
+  contactPerson: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
 });
 
 export const vendorIdParamSchema = z.object({

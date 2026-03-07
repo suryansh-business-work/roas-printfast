@@ -13,15 +13,23 @@ interface ListUsersParams {
   sort?: string;
   order?: 'asc' | 'desc';
   search?: string;
-  role?: string;
-  isActive?: string;
+  filters?: Record<string, string>;
 }
 
 export const listUsers = async (
   params: ListUsersParams,
 ): Promise<IApiResponse<IPaginatedResult<IUserDetail>>> => {
+  const { filters, ...rest } = params;
+  const queryParams: Record<string, unknown> = { ...rest };
+  if (filters) {
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== '') {
+        queryParams[key] = value;
+      }
+    });
+  }
   const response = await api.get<IApiResponse<IPaginatedResult<IUserDetail>>>('/users', {
-    params,
+    params: queryParams,
   });
   return response.data;
 };

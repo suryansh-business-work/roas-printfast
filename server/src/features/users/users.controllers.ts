@@ -40,6 +40,9 @@ export const listUsers = async (req: Request, res: Response, next: NextFunction)
       search: query.search,
       role: query.role as UserRole | undefined,
       isActive: query.isActive ? query.isActive === 'true' : undefined,
+      firstName: query.firstName,
+      lastName: query.lastName,
+      email: query.email,
     });
 
     sendSuccess(res, result);
