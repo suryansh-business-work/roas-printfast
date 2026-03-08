@@ -117,3 +117,29 @@ export const listAllActiveVendors = async (
     next(error);
   }
 };
+
+export const sendCredentials = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    await vendorsService.sendCredentials(req.params.id as string);
+    sendSuccess(res, undefined, 'Credentials sent successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getVendorPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const password = await vendorsService.getVendorPassword(req.params.id as string);
+    sendSuccess(res, { password });
+  } catch (error) {
+    next(error);
+  }
+};

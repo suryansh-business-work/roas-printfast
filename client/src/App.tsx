@@ -15,6 +15,10 @@ import Settings from './pages/Settings/Settings';
 import Campaigns from './pages/Campaigns/Campaigns';
 import CampaignDetail from './pages/Campaigns/CampaignDetail';
 import Integrations from './pages/Integrations/Integrations';
+import Products from './pages/Products/Products';
+import Postcards from './pages/Postcards/Postcards';
+import Clients from './pages/Clients/Clients';
+import ROASDashboard from './pages/ROASDashboard/ROASDashboard';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -118,10 +122,21 @@ const App = () => {
           />
           <Route path="/campaigns" element={<Campaigns />} />
           <Route path="/campaigns/:id" element={<CampaignDetail />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/postcards" element={<Postcards />} />
+          <Route path="/clients" element={<Clients />} />
+          <Route
+            path="/roas-dashboard"
+            element={
+              <ProtectedRoute roles={[UserRole.VENDOR_USER]}>
+                <ROASDashboard />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/integrations"
             element={
-              <ProtectedRoute roles={[UserRole.GOD_USER, UserRole.ADMIN_USER]}>
+              <ProtectedRoute roles={[UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER]}>
                 <Integrations />
               </ProtectedRoute>
             }

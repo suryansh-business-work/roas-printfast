@@ -13,6 +13,7 @@ const PAYMENT_DAYS = [
 export const createCampaignSchema = z.object({
   vendor: z.string().min(1, 'Vendor is required'),
   name: z.string().min(1, 'Campaign name is required').max(200, 'Name max 200 characters'),
+  description: z.string().max(2000, 'Description max 2000 characters').optional().default(''),
   currentProduct: z
     .string()
     .min(1, 'Current product is required')
@@ -35,6 +36,7 @@ export const createCampaignSchema = z.object({
 
 export const updateCampaignSchema = z.object({
   name: z.string().min(1).max(200).optional(),
+  description: z.string().max(2000).optional(),
   currentProduct: z.string().min(1).max(100).optional(),
   totalMailingQuantity: z.number().int().min(1).optional(),
   totalWeeks: z.number().int().min(1).max(52).optional(),
@@ -54,6 +56,7 @@ export const updateCampaignWeekSchema = z.object({
   mailingQuantity: z.number().int().min(0).optional(),
   totalPayments: z.number().min(0).optional(),
   inHomesWeekOf: z.string().optional(),
+  productService: z.string().nullable().optional(),
 });
 
 export const listCampaignsQuerySchema = z.object({

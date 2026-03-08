@@ -32,6 +32,7 @@ interface ListUsersParams {
   firstName?: string;
   lastName?: string;
   email?: string;
+  requesterRole?: UserRole;
 }
 
 interface UserResponse {
@@ -104,11 +105,26 @@ export const createUser = async (
 export const listUsers = async (
   params: ListUsersParams,
 ): Promise<IPaginatedResult<UserResponse>> => {
-  const { page, limit, sort, order, search, role, isActive, firstName, lastName, email } = params;
+  const {
+    page,
+    limit,
+    sort,
+    order,
+    search,
+    role,
+    isActive,
+    firstName,
+    lastName,
+    email,
+    requesterRole,
+  } = params;
 
   const filter: Record<string, unknown> = {};
 
-  if (role) {
+  // Admin users can only see vendor users (not admins or god users)
+  if (requesterRole === UserRole.ADMIN_USER) {
+    filter.role = UserRole.VENDOR_USER;
+  } else if (role) {
     filter.role = role;
   }
 

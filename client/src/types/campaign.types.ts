@@ -3,6 +3,7 @@ export interface ICampaignWeek {
   inHomesWeekOf: string;
   mailingQuantity: number;
   totalPayments: number;
+  productService: string | null;
 }
 
 export interface ICampaignListItem {
@@ -10,6 +11,7 @@ export interface ICampaignListItem {
   vendorName: string;
   vendorId: string;
   name: string;
+  description: string;
   currentProduct: string;
   totalMailingQuantity: number;
   totalWeeks: number;
@@ -25,6 +27,7 @@ export interface ICampaignDetail {
     name: string;
   };
   name: string;
+  description: string;
   currentProduct: string;
   totalMailingQuantity: number;
   totalWeeks: number;
@@ -49,6 +52,7 @@ export interface ICampaignDetail {
 export interface ICreateCampaignPayload {
   vendor: string;
   name: string;
+  description?: string;
   currentProduct: string;
   totalMailingQuantity: number;
   totalWeeks: number;
@@ -66,6 +70,7 @@ export interface ICreateCampaignPayload {
 
 export interface IUpdateCampaignPayload {
   name?: string;
+  description?: string;
   currentProduct?: string;
   totalMailingQuantity?: number;
   totalWeeks?: number;

@@ -15,6 +15,10 @@ import vendorsRoutes from './features/vendors/vendors.routes';
 import campaignsRoutes from './features/campaigns/campaigns.routes';
 import uploadRoutes from './features/upload/upload.routes';
 import integrationsRoutes from './features/integrations/integrations.routes';
+import productsRoutes from './features/products/products.routes';
+import postcardsRoutes from './features/postcards/postcards.routes';
+import clientsRoutes from './features/clients/clients.routes';
+import dashboardRoutes from './features/dashboard/dashboard.routes';
 
 const app = express();
 
@@ -39,6 +43,10 @@ app.use('/api/v1/vendors', vendorsRoutes);
 app.use('/api/v1/campaigns', campaignsRoutes);
 app.use('/api/v1/upload', uploadRoutes);
 app.use('/api/v1/integrations', integrationsRoutes);
+app.use('/api/v1/products', productsRoutes);
+app.use('/api/v1/postcards', postcardsRoutes);
+app.use('/api/v1/clients', clientsRoutes);
+app.use('/api/v1/dashboard', dashboardRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.resolve(__dirname, '../../uploads')));

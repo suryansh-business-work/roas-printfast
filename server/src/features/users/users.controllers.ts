@@ -43,6 +43,7 @@ export const listUsers = async (req: Request, res: Response, next: NextFunction)
       firstName: query.firstName,
       lastName: query.lastName,
       email: query.email,
+      requesterRole: req.user!.role,
     });
 
     sendSuccess(res, result);

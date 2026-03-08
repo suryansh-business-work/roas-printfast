@@ -6,6 +6,7 @@ export interface ISessionUser {
   role: UserRole;
   firstName: string;
   lastName: string;
+  vendorId: string | null;
 }
 
 export interface IApiResponse<T = undefined> {

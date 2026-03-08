@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { CampaignModel, ICampaign, ICampaignWeek } from './campaigns.models';
 import { VendorModel } from '../vendors/vendors.models';
 import { IPaginatedResult } from '../../types/common';
@@ -7,6 +8,7 @@ import logger from '../../utils/logger';
 interface CreateCampaignData {
   vendor: string;
   name: string;
+  description?: string;
   currentProduct: string;
   totalMailingQuantity: number;
   totalWeeks: number;
@@ -25,6 +27,7 @@ interface CreateCampaignData {
 
 interface UpdateCampaignData {
   name?: string;
+  description?: string;
   currentProduct?: string;
   totalMailingQuantity?: number;
   totalWeeks?: number;
@@ -58,6 +61,7 @@ interface CampaignWeekResponse {
   inHomesWeekOf: Date;
   mailingQuantity: number;
   totalPayments: number;
+  productService: string | null;
 }
 
 interface CampaignResponse {
@@ -67,6 +71,7 @@ interface CampaignResponse {
     name: string;
   };
   name: string;
+  description: string;
   currentProduct: string;
   totalMailingQuantity: number;
   totalWeeks: number;
@@ -93,6 +98,7 @@ interface CampaignListItem {
   vendorName: string;
   vendorId: string;
   name: string;
+  description: string;
   currentProduct: string;
   totalMailingQuantity: number;
   totalWeeks: number;
@@ -108,6 +114,7 @@ const toCampaignListItem = (campaign: ICampaign): CampaignListItem => {
     vendorName: vendorData?.name || 'Unknown',
     vendorId: vendorData?._id?.toString() || '',
     name: campaign.name,
+    description: campaign.description,
     currentProduct: campaign.currentProduct,
     totalMailingQuantity: campaign.totalMailingQuantity,
     totalWeeks: campaign.totalWeeks,
@@ -126,6 +133,7 @@ const toCampaignResponse = (campaign: ICampaign): CampaignResponse => {
       name: vendorData?.name || 'Unknown',
     },
     name: campaign.name,
+    description: campaign.description,
     currentProduct: campaign.currentProduct,
     totalMailingQuantity: campaign.totalMailingQuantity,
     totalWeeks: campaign.totalWeeks,
@@ -145,6 +153,7 @@ const toCampaignResponse = (campaign: ICampaign): CampaignResponse => {
       inHomesWeekOf: w.inHomesWeekOf,
       mailingQuantity: w.mailingQuantity,
       totalPayments: w.totalPayments,
+      productService: w.productService?.toString() || null,
     })),
     isActive: campaign.isActive,
     createdBy: campaign.createdBy.toString(),
@@ -174,6 +183,7 @@ const generateWeeks = (
       inHomesWeekOf: weekDate,
       mailingQuantity: quantity,
       totalPayments: 0,
+      productService: null,
     } as ICampaignWeek);
   }
   return weeks;
@@ -190,6 +200,7 @@ export const createCampaign = async (data: CreateCampaignData): Promise<Campaign
   const campaign = await CampaignModel.create({
     vendor: data.vendor,
     name: data.name,
+    description: data.description || '',
     currentProduct: data.currentProduct,
     totalMailingQuantity: data.totalMailingQuantity,
     totalWeeks: data.totalWeeks,
@@ -295,6 +306,7 @@ export const updateCampaign = async (
 
   const updateData: Record<string, unknown> = {};
   if (data.name !== undefined) updateData.name = data.name;
+  if (data.description !== undefined) updateData.description = data.description;
   if (data.currentProduct !== undefined) updateData.currentProduct = data.currentProduct;
   if (data.paymentDay !== undefined) updateData.paymentDay = data.paymentDay;
   if (data.nextScheduledProduct !== undefined)
@@ -342,7 +354,7 @@ export const updateCampaign = async (
 export const updateCampaignWeek = async (
   campaignId: string,
   weekNumber: number,
-  data: { mailingQuantity?: number; totalPayments?: number; inHomesWeekOf?: string },
+  data: { mailingQuantity?: number; totalPayments?: number; inHomesWeekOf?: string; productService?: string | null },
 ): Promise<CampaignResponse> => {
   const campaign = await CampaignModel.findById(campaignId);
   if (!campaign) {
@@ -362,6 +374,11 @@ export const updateCampaignWeek = async (
   }
   if (data.inHomesWeekOf) {
     campaign.weeks[weekIndex].inHomesWeekOf = new Date(data.inHomesWeekOf);
+  }
+  if (data.productService !== undefined) {
+    campaign.weeks[weekIndex].productService = data.productService
+      ? new mongoose.Types.ObjectId(data.productService)
+      : null;
   }
 
   await campaign.save();

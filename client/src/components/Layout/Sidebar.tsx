@@ -14,6 +14,10 @@ import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import IntegrationInstructionsIcon from '@mui/icons-material/IntegrationInstructions';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import MailIcon from '@mui/icons-material/Mail';
+import GroupIcon from '@mui/icons-material/Group';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import { useAuth } from '../../hooks/useAuth';
 import { UserRole } from '../../types/user.types';
 
@@ -30,6 +34,12 @@ const menuItems: MenuItem[] = [
     icon: <DashboardIcon />,
     path: '/dashboard',
     roles: [UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER],
+  },
+  {
+    label: 'ROAS Dashboard',
+    icon: <BarChartIcon />,
+    path: '/roas-dashboard',
+    roles: [UserRole.VENDOR_USER],
   },
   {
     label: 'Users',
@@ -50,10 +60,28 @@ const menuItems: MenuItem[] = [
     roles: [UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER],
   },
   {
+    label: 'Products & Services',
+    icon: <InventoryIcon />,
+    path: '/products',
+    roles: [UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER],
+  },
+  {
+    label: 'Postcards',
+    icon: <MailIcon />,
+    path: '/postcards',
+    roles: [UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER],
+  },
+  {
+    label: 'Clients',
+    icon: <GroupIcon />,
+    path: '/clients',
+    roles: [UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER],
+  },
+  {
     label: 'Integrations',
     icon: <IntegrationInstructionsIcon />,
     path: '/integrations',
-    roles: [UserRole.GOD_USER, UserRole.ADMIN_USER],
+    roles: [UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER],
   },
   {
     label: 'Reports',

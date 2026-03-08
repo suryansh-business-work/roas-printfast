@@ -11,6 +11,12 @@ const routeLabels: Record<string, string> = {
   reports: 'Reports',
   profile: 'Profile',
   settings: 'Settings',
+  campaigns: 'Campaigns',
+  integrations: 'Integrations',
+  products: 'Products & Services',
+  postcards: 'Postcards',
+  clients: 'Clients',
+  'roas-dashboard': 'ROAS Dashboard',
 };
 
 const Breadcrumb = () => {

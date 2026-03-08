@@ -5,12 +5,14 @@ export interface ICampaignWeek {
   inHomesWeekOf: Date;
   mailingQuantity: number;
   totalPayments: number;
+  productService: mongoose.Types.ObjectId | null;
 }
 
 export interface ICampaign extends Document {
   _id: mongoose.Types.ObjectId;
   vendor: mongoose.Types.ObjectId;
   name: string;
+  description: string;
   currentProduct: string;
   totalMailingQuantity: number;
   totalWeeks: number;
@@ -52,6 +54,11 @@ const campaignWeekSchema = new Schema<ICampaignWeek>(
       required: true,
       min: 0,
     },
+    productService: {
+      type: Schema.Types.ObjectId,
+      ref: 'Product',
+      default: null,
+    },
   },
   { _id: false },
 );
@@ -69,6 +76,12 @@ const campaignSchema = new Schema<ICampaign>(
       required: true,
       trim: true,
       maxlength: 200,
+    },
+    description: {
+      type: String,
+      trim: true,
+      maxlength: 2000,
+      default: '',
     },
     currentProduct: {
       type: String,

@@ -1,7 +1,13 @@
 import { VendorModel, IVendor } from './vendors.models';
+import { UserModel } from '../users/users.models';
 import { IPaginatedResult } from '../../types/common';
 import { ConflictError, NotFoundError } from '../../utils/errors';
+import { generatePassword } from '../../utils/password';
+import { sendEmail } from '../../utils/email';
+import bcrypt from 'bcrypt';
 import logger from '../../utils/logger';
+
+const BCRYPT_ROUNDS = 12;
 
 interface CreateVendorData {
   name: string;
@@ -68,7 +74,46 @@ export const createVendor = async (data: CreateVendorData): Promise<VendorRespon
     throw new ConflictError('Vendor with this email already exists');
   }
 
-  const vendor = await VendorModel.create(data);
+  // Generate credential password for the vendor user account
+  const plainPassword = generatePassword();
+  const hashedPassword = await bcrypt.hash(plainPassword, BCRYPT_ROUNDS);
+
+  const vendor = await VendorModel.create({
+    ...data,
+    credentialPassword: plainPassword,
+  });
+
+  // Create a vendor user account linked to this vendor
+  const existingUser = await UserModel.findOne({ email: data.email });
+  if (!existingUser) {
+    await UserModel.create({
+      email: data.email,
+      password: hashedPassword,
+      firstName: data.contactPerson.split(' ')[0] || data.name,
+      lastName: data.contactPerson.split(' ').slice(1).join(' ') || '',
+      role: 'vendor_user',
+      vendor: vendor._id,
+      createdBy: data.createdBy,
+    });
+  } else {
+    // Link existing user to vendor if not already linked
+    if (!existingUser.vendor) {
+      existingUser.vendor = vendor._id;
+      await existingUser.save();
+    }
+  }
+
+  // Send credential email
+  try {
+    await sendEmail(
+      data.email,
+      'Your ROAS PrintFast Account Credentials',
+      `Hello ${data.contactPerson},\n\nYour vendor account has been created on ROAS PrintFast.\n\nEmail: ${data.email}\nPassword: ${plainPassword}\n\nPlease login and change your password at your earliest convenience.\n\nBest regards,\nROAS PrintFast Team`,
+    );
+  } catch (error) {
+    logger.warn(`Failed to send credential email to ${data.email}:`, error);
+  }
+
   logger.info(`Vendor created: ${vendor._id}`);
   return toVendorResponse(vendor);
 };
@@ -189,4 +234,37 @@ export const activateVendor = async (id: string): Promise<VendorResponse> => {
 export const listAllActiveVendors = async (): Promise<VendorResponse[]> => {
   const vendors = await VendorModel.find({ isActive: true }).sort({ name: 1 });
   return vendors.map(toVendorResponse);
+};
+
+export const sendCredentials = async (id: string): Promise<void> => {
+  const vendor = await VendorModel.findById(id).select('+credentialPassword');
+  if (!vendor) {
+    throw new NotFoundError('Vendor not found');
+  }
+
+  const password = vendor.credentialPassword;
+  if (!password) {
+    throw new NotFoundError('No stored credentials found for this vendor');
+  }
+
+  await sendEmail(
+    vendor.email,
+    'Your ROAS PrintFast Account Credentials',
+    `Hello ${vendor.contactPerson},\n\nHere are your ROAS PrintFast credentials:\n\nEmail: ${vendor.email}\nPassword: ${password}\n\nPlease login and change your password at your earliest convenience.\n\nBest regards,\nROAS PrintFast Team`,
+  );
+
+  logger.info(`Credentials sent to vendor: ${id}`);
+};
+
+export const getVendorPassword = async (id: string): Promise<string> => {
+  const vendor = await VendorModel.findById(id).select('+credentialPassword');
+  if (!vendor) {
+    throw new NotFoundError('Vendor not found');
+  }
+
+  if (!vendor.credentialPassword) {
+    throw new NotFoundError('No stored credentials found for this vendor');
+  }
+
+  return vendor.credentialPassword;
 };

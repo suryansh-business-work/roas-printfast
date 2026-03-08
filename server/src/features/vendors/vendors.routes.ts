@@ -65,4 +65,22 @@ router.patch(
   vendorsController.activateVendor,
 );
 
+// Send credentials email to vendor
+router.post(
+  '/:id/send-credentials',
+  requireAuth,
+  requireRole(UserRole.GOD_USER, UserRole.ADMIN_USER),
+  validateRequest({ params: vendorIdParamSchema }),
+  vendorsController.sendCredentials,
+);
+
+// Get vendor's stored password (for "Show Password" feature)
+router.get(
+  '/:id/password',
+  requireAuth,
+  requireRole(UserRole.GOD_USER, UserRole.ADMIN_USER),
+  validateRequest({ params: vendorIdParamSchema }),
+  vendorsController.getVendorPassword,
+);
+
 export default router;

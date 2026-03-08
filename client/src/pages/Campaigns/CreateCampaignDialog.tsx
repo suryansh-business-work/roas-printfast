@@ -19,6 +19,7 @@ import * as vendorService from '../../services/vendor.service';
 const validationSchema = yup.object({
   vendor: yup.string().required('Vendor is required'),
   name: yup.string().required('Campaign name is required').max(200),
+  description: yup.string().max(2000),
   currentProduct: yup.string().required('Current product is required').max(100),
   totalMailingQuantity: yup.number().integer().min(1, 'Must be at least 1').required('Required'),
   totalWeeks: yup
@@ -62,6 +63,7 @@ const CreateCampaignDialog = ({ open, onClose, onSuccess }: CreateCampaignDialog
     initialValues: {
       vendor: '',
       name: '',
+      description: '',
       currentProduct: '',
       totalMailingQuantity: 0,
       totalWeeks: 4,
@@ -142,6 +144,19 @@ const CreateCampaignDialog = ({ open, onClose, onSuccess }: CreateCampaignDialog
                 onChange={formik.handleChange}
                 error={formik.touched.name && Boolean(formik.errors.name)}
                 helperText={formik.touched.name && formik.errors.name}
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <TextField
+                fullWidth
+                label="Description"
+                name="description"
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                error={formik.touched.description && Boolean(formik.errors.description)}
+                helperText={formik.touched.description && formik.errors.description}
+                multiline
+                rows={2}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>

@@ -8,6 +8,7 @@ export interface IUser extends Document {
   firstName: string;
   lastName: string;
   role: UserRole;
+  vendor: mongoose.Types.ObjectId | null;
   isActive: boolean;
   createdBy: mongoose.Types.ObjectId | null;
   lastLoginAt: Date | null;
@@ -47,6 +48,11 @@ const userSchema = new Schema<IUser>(
       required: true,
       enum: Object.values(UserRole),
       index: true,
+    },
+    vendor: {
+      type: Schema.Types.ObjectId,
+      ref: 'Vendor',
+      default: null,
     },
     isActive: {
       type: Boolean,

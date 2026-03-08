@@ -10,6 +10,7 @@ interface IJwtPayload {
   role: UserRole;
   firstName: string;
   lastName: string;
+  vendorId: string | null;
 }
 
 export const signToken = (user: ISessionUser): string => {
@@ -19,6 +20,7 @@ export const signToken = (user: ISessionUser): string => {
     role: user.role,
     firstName: user.firstName,
     lastName: user.lastName,
+    vendorId: user.vendorId,
   };
 
   const secret: Secret = config.jwtSecret;
@@ -37,5 +39,6 @@ export const verifyToken = (token: string): ISessionUser => {
     role: decoded.role,
     firstName: decoded.firstName,
     lastName: decoded.lastName,
+    vendorId: decoded.vendorId || null,
   };
 };

@@ -61,3 +61,15 @@ export const listAllActiveVendors = async (): Promise<IApiResponse<IVendor[]>> =
   const response = await api.get<IApiResponse<IVendor[]>>('/vendors/all-active');
   return response.data;
 };
+
+export const sendCredentials = async (id: string): Promise<IApiResponse<undefined>> => {
+  const response = await api.post<IApiResponse<undefined>>(`/vendors/${id}/send-credentials`);
+  return response.data;
+};
+
+export const getVendorPassword = async (
+  id: string,
+): Promise<IApiResponse<{ password: string }>> => {
+  const response = await api.get<IApiResponse<{ password: string }>>(`/vendors/${id}/password`);
+  return response.data;
+};

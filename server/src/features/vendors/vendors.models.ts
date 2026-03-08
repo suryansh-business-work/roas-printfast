@@ -10,6 +10,7 @@ export interface IVendor extends Document {
   state: string;
   zipCode: string;
   contactPerson: string;
+  credentialPassword: string;
   isActive: boolean;
   createdBy: mongoose.Types.ObjectId;
   createdAt: Date;
@@ -67,6 +68,12 @@ const vendorSchema = new Schema<IVendor>(
       required: true,
       trim: true,
       maxlength: 100,
+    },
+    credentialPassword: {
+      type: String,
+      trim: true,
+      default: '',
+      select: false,
     },
     isActive: {
       type: Boolean,

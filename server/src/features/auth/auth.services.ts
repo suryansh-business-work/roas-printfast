@@ -41,6 +41,7 @@ export const loginUser = async (email: string, password: string): Promise<ISessi
     role: user.role,
     firstName: user.firstName,
     lastName: user.lastName,
+    vendorId: user.vendor ? user.vendor.toString() : null,
   };
 };
 
@@ -78,6 +79,7 @@ export const signupUser = async (data: SignupData): Promise<ISessionUser> => {
     role: user.role,
     firstName: user.firstName,
     lastName: user.lastName,
+    vendorId: user.vendor ? user.vendor.toString() : null,
   };
 };
 

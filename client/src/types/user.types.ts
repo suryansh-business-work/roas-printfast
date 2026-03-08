@@ -10,6 +10,7 @@ export interface IUser {
   firstName: string;
   lastName: string;
   role: UserRole;
+  vendorId: string | null;
 }
 
 export interface IAuthUser extends IUser {
