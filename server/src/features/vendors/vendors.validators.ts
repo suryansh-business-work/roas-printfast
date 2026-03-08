@@ -44,6 +44,11 @@ export const vendorIdParamSchema = z.object({
   id: z.string().min(1, 'Vendor ID is required'),
 });
 
+export const bulkDeactivateSchema = z.object({
+  ids: z.array(z.string().min(1)).min(1, 'At least one ID is required'),
+});
+
 export type CreateVendorInput = z.infer<typeof createVendorSchema>;
 export type UpdateVendorInput = z.infer<typeof updateVendorSchema>;
 export type ListVendorsQuery = z.infer<typeof listVendorsQuerySchema>;
+export type BulkDeactivateInput = z.infer<typeof bulkDeactivateSchema>;

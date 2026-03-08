@@ -7,6 +7,7 @@ import {
   UpdateCampaignInput,
   UpdateCampaignWeekInput,
   ListCampaignsQuery,
+  BulkDeactivateInput,
 } from './campaigns.validators';
 
 export const createCampaign = async (
@@ -154,6 +155,20 @@ export const activateCampaign = async (
   try {
     const campaign = await campaignsService.activateCampaign(req.params.id as string);
     sendSuccess(res, campaign, 'Campaign activated successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const bulkDeactivateCampaigns = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { ids } = req.body as BulkDeactivateInput;
+    const count = await campaignsService.bulkDeactivateCampaigns(ids);
+    sendSuccess(res, { deactivatedCount: count }, `${count} campaigns deactivated successfully`);
   } catch (error) {
     next(error);
   }

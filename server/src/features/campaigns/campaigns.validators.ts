@@ -81,7 +81,12 @@ export const campaignWeekParamSchema = z.object({
   weekNumber: z.string().min(1, 'Week number is required'),
 });
 
+export const bulkDeactivateSchema = z.object({
+  ids: z.array(z.string().min(1)).min(1, 'At least one ID is required'),
+});
+
 export type CreateCampaignInput = z.infer<typeof createCampaignSchema>;
 export type UpdateCampaignInput = z.infer<typeof updateCampaignSchema>;
 export type UpdateCampaignWeekInput = z.infer<typeof updateCampaignWeekSchema>;
 export type ListCampaignsQuery = z.infer<typeof listCampaignsQuerySchema>;
+export type BulkDeactivateInput = z.infer<typeof bulkDeactivateSchema>;

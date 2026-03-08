@@ -268,3 +268,12 @@ export const getVendorPassword = async (id: string): Promise<string> => {
 
   return vendor.credentialPassword;
 };
+
+export const bulkDeactivateVendors = async (ids: string[]): Promise<number> => {
+  const result = await VendorModel.updateMany(
+    { _id: { $in: ids } },
+    { $set: { isActive: false } },
+  );
+  logger.info(`Bulk deactivated ${result.modifiedCount} vendors`);
+  return result.modifiedCount;
+};

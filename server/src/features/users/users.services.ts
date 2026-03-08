@@ -223,3 +223,12 @@ export const activateUser = async (userId: string): Promise<UserResponse> => {
 
   return toUserResponse(user);
 };
+
+export const bulkDeactivateUsers = async (ids: string[]): Promise<number> => {
+  const result = await UserModel.updateMany(
+    { _id: { $in: ids } },
+    { $set: { isActive: false } },
+  );
+  logger.info(`Bulk deactivated ${result.modifiedCount} users`);
+  return result.modifiedCount;
+};

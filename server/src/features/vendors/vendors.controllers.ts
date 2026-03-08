@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as vendorsService from './vendors.services';
 import { sendSuccess } from '../../utils/response';
-import { CreateVendorInput, UpdateVendorInput, ListVendorsQuery } from './vendors.validators';
+import { CreateVendorInput, UpdateVendorInput, ListVendorsQuery, BulkDeactivateInput } from './vendors.validators';
 
 export const createVendor = async (
   req: Request,
@@ -139,6 +139,20 @@ export const getVendorPassword = async (
   try {
     const password = await vendorsService.getVendorPassword(req.params.id as string);
     sendSuccess(res, { password });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const bulkDeactivateVendors = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { ids } = req.body as BulkDeactivateInput;
+    const count = await vendorsService.bulkDeactivateVendors(ids);
+    sendSuccess(res, { deactivatedCount: count }, `${count} vendors deactivated successfully`);
   } catch (error) {
     next(error);
   }

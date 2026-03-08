@@ -9,6 +9,7 @@ import {
   updateClientSchema,
   listClientsQuerySchema,
   clientIdParamSchema,
+  bulkDeactivateSchema,
 } from './clients.validators';
 
 const router = Router();
@@ -58,6 +59,14 @@ router.patch(
   requireRole(UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER),
   validateRequest({ params: clientIdParamSchema }),
   clientsController.activateClient,
+);
+
+router.post(
+  '/bulk-deactivate',
+  requireAuth,
+  requireRole(UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER),
+  validateRequest({ body: bulkDeactivateSchema }),
+  clientsController.bulkDeactivateClients,
 );
 
 export default router;

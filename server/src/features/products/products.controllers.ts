@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as productsService from './products.services';
 import { sendSuccess } from '../../utils/response';
-import { CreateProductInput, UpdateProductInput, ListProductsQuery } from './products.validators';
+import { CreateProductInput, UpdateProductInput, ListProductsQuery, BulkDeactivateInput } from './products.validators';
 
 export const createProduct = async (
   req: Request,
@@ -110,6 +110,20 @@ export const listAllActiveProducts = async (
     const vendorId = req.query.vendor as string | undefined;
     const products = await productsService.listAllActiveProducts(vendorId);
     sendSuccess(res, products);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const bulkDeactivateProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { ids } = req.body as BulkDeactivateInput;
+    const count = await productsService.bulkDeactivateProducts(ids);
+    sendSuccess(res, { deactivatedCount: count }, `${count} products deactivated successfully`);
   } catch (error) {
     next(error);
   }

@@ -9,6 +9,7 @@ import {
   updateProductSchema,
   listProductsQuerySchema,
   productIdParamSchema,
+  bulkDeactivateSchema,
 } from './products.validators';
 
 const router = Router();
@@ -61,6 +62,14 @@ router.patch(
   requireRole(UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER),
   validateRequest({ params: productIdParamSchema }),
   productsController.activateProduct,
+);
+
+router.post(
+  '/bulk-deactivate',
+  requireAuth,
+  requireRole(UserRole.GOD_USER, UserRole.ADMIN_USER, UserRole.VENDOR_USER),
+  validateRequest({ body: bulkDeactivateSchema }),
+  productsController.bulkDeactivateProducts,
 );
 
 export default router;

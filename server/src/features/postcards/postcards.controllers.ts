@@ -5,6 +5,7 @@ import {
   CreatePostcardInput,
   UpdatePostcardInput,
   ListPostcardsQuery,
+  BulkDeactivateInput,
 } from './postcards.validators';
 
 export const createPostcard = async (
@@ -100,6 +101,20 @@ export const activatePostcard = async (
   try {
     const postcard = await postcardsService.activatePostcard(req.params.id as string);
     sendSuccess(res, postcard, 'Postcard activated successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const bulkDeactivatePostcards = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { ids } = req.body as BulkDeactivateInput;
+    const count = await postcardsService.bulkDeactivatePostcards(ids);
+    sendSuccess(res, { deactivatedCount: count }, `${count} postcards deactivated successfully`);
   } catch (error) {
     next(error);
   }

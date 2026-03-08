@@ -59,3 +59,13 @@ export const activateClient = async (id: string): Promise<IApiResponse<IClientDe
   const response = await api.patch<IApiResponse<IClientDetail>>(`/clients/${id}/activate`);
   return response.data;
 };
+
+export const bulkDeactivateClients = async (
+  ids: string[],
+): Promise<IApiResponse<{ deactivatedCount: number }>> => {
+  const response = await api.post<IApiResponse<{ deactivatedCount: number }>>(
+    '/clients/bulk-deactivate',
+    { ids },
+  );
+  return response.data;
+};

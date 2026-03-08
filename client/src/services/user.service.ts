@@ -81,3 +81,13 @@ export const updateProfile = async (
   const response = await api.patch<IApiResponse<IUserDetail>>('/users/profile', payload);
   return response.data;
 };
+
+export const bulkDeactivateUsers = async (
+  ids: string[],
+): Promise<IApiResponse<{ deactivatedCount: number }>> => {
+  const response = await api.post<IApiResponse<{ deactivatedCount: number }>>(
+    '/users/bulk-deactivate',
+    { ids },
+  );
+  return response.data;
+};

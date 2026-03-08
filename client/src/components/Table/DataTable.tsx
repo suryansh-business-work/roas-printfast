@@ -1,4 +1,4 @@
-import { useState, useCallback, ChangeEvent } from 'react';
+import { useState, useCallback, useMemo, ChangeEvent } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -13,9 +13,11 @@ import TablePagination from '@mui/material/TablePagination';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import Checkbox from '@mui/material/Checkbox';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import TableFilterRow from './TableFilterRow';
+import DataTableToolbar from './DataTableToolbar';
 
 export interface Column<T> {
   id: keyof T | string;
@@ -45,6 +47,10 @@ interface DataTableProps<T> {
   onFiltersChange?: (filters: Record<string, string>) => void;
   isLoading?: boolean;
   getRowKey: (row: T) => string;
+  selectable?: boolean;
+  selectedRows?: string[];
+  onSelectionChange?: (selectedIds: string[]) => void;
+  onBulkDelete?: (selectedIds: string[]) => void;
 }
 
 const DataTable = <T,>({
@@ -64,11 +70,37 @@ const DataTable = <T,>({
   onFiltersChange,
   isLoading,
   getRowKey,
+  selectable = false,
+  selectedRows = [],
+  onSelectionChange,
+  onBulkDelete,
 }: DataTableProps<T>) => {
   const [localSearch, setLocalSearch] = useState(searchValue);
   const [filterKey, setFilterKey] = useState(0);
 
   const hasActiveFilters = filters && Object.values(filters).some((v) => v !== '');
+
+  const selectedSet = useMemo(() => new Set(selectedRows), [selectedRows]);
+  const allRowKeys = useMemo(() => rows.map(getRowKey), [rows, getRowKey]);
+  const allSelected = rows.length > 0 && allRowKeys.every((k) => selectedSet.has(k));
+  const someSelected = selectedRows.length > 0 && !allSelected;
+  const colSpan = selectable ? columns.length + 1 : columns.length;
+
+  const handleSelectAll = useCallback(() => {
+    if (!onSelectionChange) return;
+    onSelectionChange(allSelected ? [] : allRowKeys);
+  }, [allSelected, allRowKeys, onSelectionChange]);
+
+  const handleSelectRow = useCallback(
+    (key: string) => {
+      if (!onSelectionChange) return;
+      const next = selectedSet.has(key)
+        ? selectedRows.filter((id) => id !== key)
+        : [...selectedRows, key];
+      onSelectionChange(next);
+    },
+    [selectedRows, selectedSet, onSelectionChange],
+  );
 
   const handleSearchChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -100,6 +132,10 @@ const DataTable = <T,>({
     setFilterKey((k) => k + 1);
   }, [onFiltersChange]);
 
+  const handleBulkDelete = useCallback(() => {
+    onBulkDelete?.(selectedRows);
+  }, [onBulkDelete, selectedRows]);
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -125,10 +161,26 @@ const DataTable = <T,>({
           </Tooltip>
         )}
       </Box>
+      {selectable && (
+        <DataTableToolbar
+          selectedCount={selectedRows.length}
+          onBulkDelete={onBulkDelete ? handleBulkDelete : undefined}
+        />
+      )}
       <TableContainer>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
+              {selectable && (
+                <TableCell padding="checkbox" sx={{ fontWeight: 600 }}>
+                  <Checkbox
+                    indeterminate={someSelected}
+                    checked={allSelected}
+                    onChange={handleSelectAll}
+                    size="small"
+                  />
+                </TableCell>
+              )}
               {columns.map((col) => (
                 <TableCell key={String(col.id)} sx={{ minWidth: col.minWidth, fontWeight: 600 }}>
                   {col.sortable !== false ? (
@@ -151,34 +203,48 @@ const DataTable = <T,>({
                 columns={columns}
                 filters={filters}
                 onFilterChange={handleFilterChange}
+                hasCheckbox={selectable}
               />
             )}
           </TableHead>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} align="center" sx={{ py: 4 }}>
+                <TableCell colSpan={colSpan} align="center" sx={{ py: 4 }}>
                   Loading...
                 </TableCell>
               </TableRow>
             ) : rows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} align="center" sx={{ py: 4 }}>
+                <TableCell colSpan={colSpan} align="center" sx={{ py: 4 }}>
                   No records found
                 </TableCell>
               </TableRow>
             ) : (
-              rows.map((row) => (
-                <TableRow hover key={getRowKey(row)}>
-                  {columns.map((col) => (
-                    <TableCell key={String(col.id)}>
-                      {col.render
-                        ? col.render(row)
-                        : String((row as Record<string, unknown>)[String(col.id)] ?? '')}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              rows.map((row) => {
+                const key = getRowKey(row);
+                const isSelected = selectedSet.has(key);
+                return (
+                  <TableRow hover key={key} selected={isSelected}>
+                    {selectable && (
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={isSelected}
+                          onChange={() => handleSelectRow(key)}
+                          size="small"
+                        />
+                      </TableCell>
+                    )}
+                    {columns.map((col) => (
+                      <TableCell key={String(col.id)}>
+                        {col.render
+                          ? col.render(row)
+                          : String((row as Record<string, unknown>)[String(col.id)] ?? '')}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as clientsService from './clients.services';
 import { sendSuccess } from '../../utils/response';
-import { CreateClientInput, UpdateClientInput, ListClientsQuery } from './clients.validators';
+import { CreateClientInput, UpdateClientInput, ListClientsQuery, BulkDeactivateInput } from './clients.validators';
 
 export const createClient = async (
   req: Request,
@@ -100,6 +100,20 @@ export const activateClient = async (
   try {
     const client = await clientsService.activateClient(req.params.id as string);
     sendSuccess(res, client, 'Client activated successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const bulkDeactivateClients = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { ids } = req.body as BulkDeactivateInput;
+    const count = await clientsService.bulkDeactivateClients(ids);
+    sendSuccess(res, { deactivatedCount: count }, `${count} clients deactivated successfully`);
   } catch (error) {
     next(error);
   }

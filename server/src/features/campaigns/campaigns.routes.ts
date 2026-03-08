@@ -12,6 +12,7 @@ import {
   listCampaignsQuerySchema,
   campaignIdParamSchema,
   campaignWeekParamSchema,
+  bulkDeactivateSchema,
 } from './campaigns.validators';
 
 const router = Router();
@@ -91,6 +92,14 @@ router.patch(
   requireRole(UserRole.GOD_USER, UserRole.ADMIN_USER),
   validateRequest({ params: campaignIdParamSchema }),
   campaignsController.activateCampaign,
+);
+
+router.post(
+  '/bulk-deactivate',
+  requireAuth,
+  requireRole(UserRole.GOD_USER, UserRole.ADMIN_USER),
+  validateRequest({ body: bulkDeactivateSchema }),
+  campaignsController.bulkDeactivateCampaigns,
 );
 
 export default router;

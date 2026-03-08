@@ -31,6 +31,11 @@ export const productIdParamSchema = z.object({
   id: z.string().min(1, 'Product ID is required'),
 });
 
+export const bulkDeactivateSchema = z.object({
+  ids: z.array(z.string().min(1)).min(1, 'At least one ID is required'),
+});
+
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 export type ListProductsQuery = z.infer<typeof listProductsQuerySchema>;
+export type BulkDeactivateInput = z.infer<typeof bulkDeactivateSchema>;

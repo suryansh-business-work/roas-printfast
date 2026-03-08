@@ -43,7 +43,7 @@ export const updateVendor = async (
   id: string,
   data: IUpdateVendorPayload,
 ): Promise<IApiResponse<IVendor>> => {
-  const response = await api.put<IApiResponse<IVendor>>(`/vendors/${id}`, data);
+  const response = await api.patch<IApiResponse<IVendor>>(`/vendors/${id}`, data);
   return response.data;
 };
 
@@ -71,5 +71,15 @@ export const getVendorPassword = async (
   id: string,
 ): Promise<IApiResponse<{ password: string }>> => {
   const response = await api.get<IApiResponse<{ password: string }>>(`/vendors/${id}/password`);
+  return response.data;
+};
+
+export const bulkDeactivateVendors = async (
+  ids: string[],
+): Promise<IApiResponse<{ deactivatedCount: number }>> => {
+  const response = await api.post<IApiResponse<{ deactivatedCount: number }>>(
+    '/vendors/bulk-deactivate',
+    { ids },
+  );
   return response.data;
 };

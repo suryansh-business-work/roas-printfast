@@ -36,6 +36,11 @@ export const clientIdParamSchema = z.object({
   id: z.string().min(1, 'Client ID is required'),
 });
 
+export const bulkDeactivateSchema = z.object({
+  ids: z.array(z.string().min(1)).min(1, 'At least one ID is required'),
+});
+
 export type CreateClientInput = z.infer<typeof createClientSchema>;
 export type UpdateClientInput = z.infer<typeof updateClientSchema>;
 export type ListClientsQuery = z.infer<typeof listClientsQuerySchema>;
+export type BulkDeactivateInput = z.infer<typeof bulkDeactivateSchema>;

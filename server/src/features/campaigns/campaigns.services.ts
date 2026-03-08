@@ -439,3 +439,12 @@ export const activateCampaign = async (id: string): Promise<CampaignResponse> =>
   logger.info(`Campaign activated: ${id}`);
   return toCampaignResponse(campaign);
 };
+
+export const bulkDeactivateCampaigns = async (ids: string[]): Promise<number> => {
+  const result = await CampaignModel.updateMany(
+    { _id: { $in: ids } },
+    { $set: { isActive: false } },
+  );
+  logger.info(`Bulk deactivated ${result.modifiedCount} campaigns`);
+  return result.modifiedCount;
+};

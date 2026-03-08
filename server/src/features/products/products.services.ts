@@ -231,3 +231,12 @@ export const listAllActiveProducts = async (vendorId?: string): Promise<ProductL
     .sort({ name: 1 });
   return products.map(toProductListItem);
 };
+
+export const bulkDeactivateProducts = async (ids: string[]): Promise<number> => {
+  const result = await ProductModel.updateMany(
+    { _id: { $in: ids } },
+    { $set: { isActive: false } },
+  );
+  logger.info(`Bulk deactivated ${result.modifiedCount} products`);
+  return result.modifiedCount;
+};

@@ -249,3 +249,12 @@ export const activateClient = async (id: string): Promise<ClientResponse> => {
   logger.info(`Client activated: ${id}`);
   return toClientResponse(client);
 };
+
+export const bulkDeactivateClients = async (ids: string[]): Promise<number> => {
+  const result = await ClientModel.updateMany(
+    { _id: { $in: ids } },
+    { $set: { isActive: false } },
+  );
+  logger.info(`Bulk deactivated ${result.modifiedCount} clients`);
+  return result.modifiedCount;
+};

@@ -31,6 +31,11 @@ export const postcardIdParamSchema = z.object({
   id: z.string().min(1, 'Postcard ID is required'),
 });
 
+export const bulkDeactivateSchema = z.object({
+  ids: z.array(z.string().min(1)).min(1, 'At least one ID is required'),
+});
+
 export type CreatePostcardInput = z.infer<typeof createPostcardSchema>;
 export type UpdatePostcardInput = z.infer<typeof updatePostcardSchema>;
 export type ListPostcardsQuery = z.infer<typeof listPostcardsQuerySchema>;
+export type BulkDeactivateInput = z.infer<typeof bulkDeactivateSchema>;

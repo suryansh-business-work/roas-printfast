@@ -59,3 +59,13 @@ export const activatePostcard = async (id: string): Promise<IApiResponse<IPostca
   const response = await api.patch<IApiResponse<IPostcardDetail>>(`/postcards/${id}/activate`);
   return response.data;
 };
+
+export const bulkDeactivatePostcards = async (
+  ids: string[],
+): Promise<IApiResponse<{ deactivatedCount: number }>> => {
+  const response = await api.post<IApiResponse<{ deactivatedCount: number }>>(
+    '/postcards/bulk-deactivate',
+    { ids },
+  );
+  return response.data;
+};

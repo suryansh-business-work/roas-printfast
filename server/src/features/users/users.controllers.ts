@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as usersService from './users.services';
 import { sendSuccess } from '../../utils/response';
-import { CreateUserInput, UpdateUserInput, ListUsersQuery } from './users.validators';
+import { CreateUserInput, UpdateUserInput, ListUsersQuery, BulkDeactivateInput } from './users.validators';
 import { UserRole } from '../../types/enums';
 
 export const createUser = async (
@@ -129,6 +129,20 @@ export const updateProfile = async (
     const user = await usersService.updateUser(userId, data);
 
     sendSuccess(res, user, 'Profile updated successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const bulkDeactivateUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { ids } = req.body as BulkDeactivateInput;
+    const count = await usersService.bulkDeactivateUsers(ids);
+    sendSuccess(res, { deactivatedCount: count }, `${count} users deactivated successfully`);
   } catch (error) {
     next(error);
   }

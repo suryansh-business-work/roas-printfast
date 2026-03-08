@@ -220,3 +220,12 @@ export const activatePostcard = async (id: string): Promise<PostcardResponse> =>
   logger.info(`Postcard activated: ${id}`);
   return toPostcardResponse(postcard);
 };
+
+export const bulkDeactivatePostcards = async (ids: string[]): Promise<number> => {
+  const result = await PostcardModel.updateMany(
+    { _id: { $in: ids } },
+    { $set: { isActive: false } },
+  );
+  logger.info(`Bulk deactivated ${result.modifiedCount} postcards`);
+  return result.modifiedCount;
+};

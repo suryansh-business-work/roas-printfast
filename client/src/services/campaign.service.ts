@@ -77,3 +77,13 @@ export const activateCampaign = async (id: string): Promise<IApiResponse<ICampai
   const response = await api.patch<IApiResponse<ICampaignDetail>>(`/campaigns/${id}/activate`);
   return response.data;
 };
+
+export const bulkDeactivateCampaigns = async (
+  ids: string[],
+): Promise<IApiResponse<{ deactivatedCount: number }>> => {
+  const response = await api.post<IApiResponse<{ deactivatedCount: number }>>(
+    '/campaigns/bulk-deactivate',
+    { ids },
+  );
+  return response.data;
+};

@@ -9,9 +9,15 @@ interface TableFilterRowProps<T> {
   columns: Column<T>[];
   filters: Record<string, string>;
   onFilterChange: (field: string, value: string) => void;
+  hasCheckbox?: boolean;
 }
 
-const TableFilterRow = <T,>({ columns, filters, onFilterChange }: TableFilterRowProps<T>) => {
+const TableFilterRow = <T,>({
+  columns,
+  filters,
+  onFilterChange,
+  hasCheckbox = false,
+}: TableFilterRowProps<T>) => {
   const [localValues, setLocalValues] = useState<Record<string, string>>(filters);
   const timeoutsRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
@@ -44,6 +50,7 @@ const TableFilterRow = <T,>({ columns, filters, onFilterChange }: TableFilterRow
 
   return (
     <TableRow>
+      {hasCheckbox && <TableCell sx={{ py: 0.5 }} />}
       {columns.map((col) => {
         const field = String(col.id);
 

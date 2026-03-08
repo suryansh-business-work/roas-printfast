@@ -9,6 +9,7 @@ import {
   updateVendorSchema,
   listVendorsQuerySchema,
   vendorIdParamSchema,
+  bulkDeactivateSchema,
 } from './vendors.validators';
 
 const router = Router();
@@ -81,6 +82,14 @@ router.get(
   requireRole(UserRole.GOD_USER, UserRole.ADMIN_USER),
   validateRequest({ params: vendorIdParamSchema }),
   vendorsController.getVendorPassword,
+);
+
+router.post(
+  '/bulk-deactivate',
+  requireAuth,
+  requireRole(UserRole.GOD_USER, UserRole.ADMIN_USER),
+  validateRequest({ body: bulkDeactivateSchema }),
+  vendorsController.bulkDeactivateVendors,
 );
 
 export default router;

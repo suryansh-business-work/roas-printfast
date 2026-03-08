@@ -68,3 +68,13 @@ export const listAllActiveProducts = async (
   });
   return response.data;
 };
+
+export const bulkDeactivateProducts = async (
+  ids: string[],
+): Promise<IApiResponse<{ deactivatedCount: number }>> => {
+  const response = await api.post<IApiResponse<{ deactivatedCount: number }>>(
+    '/products/bulk-deactivate',
+    { ids },
+  );
+  return response.data;
+};
