@@ -19,6 +19,9 @@ import productsRoutes from './features/products/products.routes';
 import postcardsRoutes from './features/postcards/postcards.routes';
 import clientsRoutes from './features/clients/clients.routes';
 import dashboardRoutes from './features/dashboard/dashboard.routes';
+import jobsRoutes from './features/jobs/jobs.routes';
+import invoicesRoutes from './features/invoices/invoices.routes';
+import { startSyncCron } from './features/integrations/sync.cron';
 
 const app = express();
 
@@ -47,6 +50,8 @@ app.use('/api/v1/products', productsRoutes);
 app.use('/api/v1/postcards', postcardsRoutes);
 app.use('/api/v1/clients', clientsRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/jobs', jobsRoutes);
+app.use('/api/v1/invoices', invoicesRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.resolve(__dirname, '../../uploads')));
@@ -62,6 +67,9 @@ app.use(errorMiddleware);
 // Start server
 const startServer = async (): Promise<void> => {
   await connectDatabase();
+
+  // Start integration sync cron
+  startSyncCron();
 
   app.listen(config.port, () => {
     logger.info(`Server running on port ${config.port} in ${config.nodeEnv} mode`);

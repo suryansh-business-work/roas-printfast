@@ -25,6 +25,10 @@ interface IConfig {
   imagekitPublicKey: string;
   imagekitPrivateKey: string;
   imagekitUrlEndpoint: string;
+  serviceTitanAppKey: string;
+  serviceTitanAuthUrl: string;
+  serviceTitanApiUrl: string;
+  syncCronSchedule: string;
 }
 
 const parseCorsOrigin = (): string | string[] => {
@@ -54,6 +58,10 @@ const config: IConfig = {
   imagekitPublicKey: process.env.IMAGEKIT_PUBLIC_KEY || '',
   imagekitPrivateKey: process.env.IMAGEKIT_PRIVATE_KEY || '',
   imagekitUrlEndpoint: process.env.IMAGEKIT_URL_ENDPOINTS || '',
+  serviceTitanAppKey: process.env.SERVICE_TITAN_APP_KEY || '',
+  serviceTitanAuthUrl: process.env.SERVICE_TITAN_AUTH_URL || 'https://auth.servicetitan.io/connect/token',
+  serviceTitanApiUrl: process.env.SERVICE_TITAN_API_URL || 'https://api.servicetitan.io',
+  syncCronSchedule: process.env.SYNC_CRON_SCHEDULE || '0 */6 * * *',
 };
 
 export default config;

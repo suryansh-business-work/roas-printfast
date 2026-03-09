@@ -22,10 +22,13 @@ export interface IIntegration extends Document {
     clientId?: string;
     clientSecret?: string;
     environment?: string;
+    redirectUri?: string;
     accessToken?: string;
     refreshToken?: string;
+    tokenExpiresAt?: Date;
   };
   connectedAt: Date | null;
+  lastSyncAt: Date | null;
   isActive: boolean;
   createdBy: mongoose.Types.ObjectId;
   createdAt: Date;
@@ -57,10 +60,16 @@ const integrationSchema = new Schema<IIntegration>(
       clientId: { type: String, trim: true, select: false },
       clientSecret: { type: String, trim: true, select: false },
       environment: { type: String, trim: true },
+      redirectUri: { type: String, trim: true, select: false },
       accessToken: { type: String, trim: true, select: false },
       refreshToken: { type: String, trim: true, select: false },
+      tokenExpiresAt: { type: Date, select: false },
     },
     connectedAt: {
+      type: Date,
+      default: null,
+    },
+    lastSyncAt: {
       type: Date,
       default: null,
     },

@@ -5,6 +5,10 @@ import {
   IConnectServiceTitanPayload,
   IConnectJobberPayload,
   IDisconnectIntegrationPayload,
+  IUpdateIntegrationSettingsPayload,
+  ISyncResult,
+  IJobberOAuthUrlResponse,
+  ISaveJobberCredentialsPayload,
 } from '../types/integration.types';
 
 export const getVendorIntegrations = async (
@@ -38,5 +42,44 @@ export const disconnectIntegration = async (
   payload: IDisconnectIntegrationPayload,
 ): Promise<IApiResponse<IIntegration>> => {
   const response = await api.post<IApiResponse<IIntegration>>('/integrations/disconnect', payload);
+  return response.data;
+};
+
+export const updateIntegrationSettings = async (
+  integrationId: string,
+  payload: IUpdateIntegrationSettingsPayload,
+): Promise<IApiResponse<IIntegration>> => {
+  const response = await api.patch<IApiResponse<IIntegration>>(
+    `/integrations/settings/${integrationId}`,
+    payload,
+  );
+  return response.data;
+};
+
+export const triggerSync = async (
+  integrationId: string,
+): Promise<IApiResponse<ISyncResult>> => {
+  const response = await api.post<IApiResponse<ISyncResult>>(
+    `/integrations/${integrationId}/sync`,
+  );
+  return response.data;
+};
+
+export const getJobberOAuthUrl = async (
+  vendorId: string,
+): Promise<IApiResponse<IJobberOAuthUrlResponse>> => {
+  const response = await api.get<IApiResponse<IJobberOAuthUrlResponse>>(
+    `/integrations/jobber/oauth-url/${vendorId}`,
+  );
+  return response.data;
+};
+
+export const saveJobberCredentials = async (
+  payload: ISaveJobberCredentialsPayload,
+): Promise<IApiResponse<IIntegration>> => {
+  const response = await api.post<IApiResponse<IIntegration>>(
+    '/integrations/jobber/credentials',
+    payload,
+  );
   return response.data;
 };

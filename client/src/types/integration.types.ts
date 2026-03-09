@@ -17,6 +17,7 @@ export interface IIntegration {
   status: IntegrationStatus;
   environment?: string;
   connectedAt: string | null;
+  lastSyncAt: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -35,7 +36,30 @@ export interface IConnectJobberPayload {
   code: string;
 }
 
+export interface ISaveJobberCredentialsPayload {
+  vendorId: string;
+  clientId: string;
+  clientSecret: string;
+  redirectUri?: string;
+}
+
 export interface IDisconnectIntegrationPayload {
   vendorId: string;
   provider: IntegrationProvider;
+}
+
+export interface IUpdateIntegrationSettingsPayload {
+  tenantId?: string;
+  clientId?: string;
+  clientSecret?: string;
+  environment?: 'production' | 'integration';
+}
+
+export interface ISyncResult {
+  jobs: number;
+  invoices: number;
+}
+
+export interface IJobberOAuthUrlResponse {
+  url: string;
 }
